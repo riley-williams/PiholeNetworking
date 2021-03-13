@@ -11,4 +11,9 @@ import Foundation
 public struct PHClient: Codable {
 	public var name: String
 	public var ip: String
+	
+	public init(name: String, ip: String) {
+		self.name = name
+		self.ip = ip
+	}
 }

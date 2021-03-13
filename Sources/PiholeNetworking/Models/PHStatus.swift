@@ -20,6 +20,29 @@ public struct PHStatus: Codable {
 	public var totalDNSCount:Int = 0
 	public var percentAdsToday:Float = 0
 	
+	public init(state:PHState = .unknown,
+				blockedDomainCount:Int = 0,
+				dnsQueryTodayCount:Int = 0,
+				adsBlockedTodayCount:Int = 0,
+				uniqueDomainCount:Int = 0,
+				forwardedQueryCount:Int = 0,
+				cachedQueryCount:Int = 0,
+				totalClientsCount:Int = 0,
+				uniqueClientCount:Int = 0,
+				totalDNSCount:Int = 0,
+				percentAdsToday:Float = 0) {
+		self.blockedDomainCount = blockedDomainCount
+		self.dnsQueryTodayCount = dnsQueryTodayCount
+		self.adsBlockedTodayCount = adsBlockedTodayCount
+		self.uniqueDomainCount = uniqueDomainCount
+		self.forwardedQueryCount = forwardedQueryCount
+		self.cachedQueryCount = cachedQueryCount
+		self.totalClientsCount = totalClientsCount
+		self.uniqueClientCount = uniqueClientCount
+		self.totalDNSCount = totalDNSCount
+		self.percentAdsToday = percentAdsToday
+	}
+	
 	enum CodingKeys: String, CodingKey {
 		case state = "status"
 		case blockedDomainCount = "domains_being_blocked"
@@ -33,4 +56,5 @@ public struct PHStatus: Codable {
 		case totalDNSCount = "dns_queries_all_types"
 		case percentAdsToday = "ads_percentage_today"
 	}
+	
 }

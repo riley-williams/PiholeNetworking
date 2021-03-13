@@ -11,6 +11,11 @@ public struct PHTopQueries: Codable {
 	public var topPassed: [String: Int]
 	public var topBlocked: [String: Int]
 	
+	public init(topPassed: [String: Int], topBlocked: [String: Int]) {
+		self.topPassed = topPassed
+		self.topBlocked = topBlocked
+	}
+	
 	enum CodingKeys: String, CodingKey {
 		case topPassed = "top_queries"
 		case topBlocked = "top_ads"
