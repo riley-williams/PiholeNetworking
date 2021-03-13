@@ -8,11 +8,7 @@
 
 import Foundation
 
-public struct PHClient: Codable, CustomStringConvertible {
+public struct PHClient: Codable {
 	var name: String
 	var ip: String
-	
-	var description: String {
-		return name.isEmpty ? ip : name
-	}
 }
