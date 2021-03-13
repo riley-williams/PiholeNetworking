@@ -8,8 +8,8 @@
 import Foundation
 
 public struct PH10MinClientData: Codable {
-	var clients: [PHClient]
-	var timestamps: [String:[Int]]
+	public var clients: [PHClient]
+	public var timestamps: [String:[Int]]
 	
 	enum CodingKeys: String, CodingKey {
 		case clients

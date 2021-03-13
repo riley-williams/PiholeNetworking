@@ -9,6 +9,6 @@
 import Foundation
 
 public struct PHClient: Codable {
-	var name: String
-	var ip: String
+	public var name: String
+	public var ip: String
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PHStatus: Codable {
+open struct PHStatus: Codable {
 	var state:PHState = .unknown
 	var blockedDomainCount:Int = 0
 	var dnsQueryTodayCount:Int = 0

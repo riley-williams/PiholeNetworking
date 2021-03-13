@@ -8,8 +8,8 @@
 import Foundation
 
 public struct PHTopQueries: Codable {
-	var topPassed: [String: Int]
-	var topBlocked: [String: Int]
+	public var topPassed: [String: Int]
+	public var topBlocked: [String: Int]
 	
 	enum CodingKeys: String, CodingKey {
 		case topPassed = "top_queries"
