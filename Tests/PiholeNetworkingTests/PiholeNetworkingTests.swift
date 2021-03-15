@@ -46,7 +46,7 @@ final class PiholeNetworkingTests: XCTestCase {
 		return URLSession(configuration: config)
 	}
 	
-	
+	//TODO: Why Apple :/
     static var allTests = [
         ("testGetHardwareInfo", testGetHardwareInfo),
     ]

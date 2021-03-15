@@ -4,7 +4,6 @@ import XCTest
 public func allTests() -> [XCTestCaseEntry] {
     return [
         testCase(PiholeNetworkingTests.allTests),
-		testCase(DecodingTests.allTests)
-    ]
+	]
 }
 #endif
