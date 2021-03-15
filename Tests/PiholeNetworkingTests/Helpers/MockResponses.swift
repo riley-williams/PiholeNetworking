@@ -3,10 +3,8 @@ import Foundation
 enum MockJSON { }
 
 extension MockJSON {
-	static var status: String { endpoints["/admin"]! }
-	
 	static let endpoints = [
-		"/admin":
+		URL(string: "https://256.0.0.0/admin/api.php?summaryRaw")!:
 	"""
 	{
 	 "domains_being_blocked": "92,699",
