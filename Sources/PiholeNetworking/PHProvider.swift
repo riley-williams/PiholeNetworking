@@ -87,7 +87,12 @@ public class PHProvider: PHResolver {
 		return resultDecoderPublisher(url: url, type: PHTopQueries.self)
 	}
 	
-	//func get10MinData(_ instance: PHInstance) -> AnyPublisher<PH10MinData, ResolverError>
+	public func get10MinData(_ instance: PHInstance) -> AnyPublisher<PH10MinData, PHResolverError> {
+		guard let url = URL(string: "http://\(instance.address)/admin/api.php?overTimeData10mins")
+		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
+		return resultDecoderPublisher(url: url, type: PH10MinData.self)
+	}
+
 	
 	public func get10MinClientData(for instance: PHInstance) -> AnyPublisher<PH10MinClientData, PHResolverError> {
 		guard let token = instance.hashedPassword,

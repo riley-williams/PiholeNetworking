@@ -5,49 +5,41 @@ import Combine
 final class PiholeNetworkingTests: XCTestCase {
 	let instance = ConcreteInstance(hostname: "256.0.0.0")
 	var cancellables: Set<AnyCancellable> = []
-	let session = mockSession
+	let decoder = JSONDecoder()
+	
 	override func setUp() {
 		
 	}
 	
-	final func testGetHardwareInfo() throws {
-		let expectation = XCTestExpectation()
+	final func testHashPassword() throws {
+		let instance = ConcreteInstance(hostname: "1.2.3.4", port: 80, password: "8MzrcBRm")
 		
-		PHProvider(session: session)
-			.getHWInfo(instance)
-			.sink { completion in
-				expectation.fulfill()
-			} receiveValue: { value in
-				
-			}.store(in: &cancellables)
-		wait(for: [expectation], timeout: 3)
-		
+		XCTAssertEqual(instance.hashedPassword, "af90e024ac7f515011ae0c9b326a7e9ff7a00fa9d7f770d323c848f12659e3b9")
 	}
 	
-	final func testGetStatus() throws {
-		let expectation = XCTestExpectation()
+	final func testDecodeSummaryRaw() throws {
+		let data = MockJSON.summaryRaw.data(using: .utf8)!
+		let summary = try decoder.decode(PHStatus.self, from: data)
 		
-		PHProvider(session: session)
-			.getStatus(instance)
-			.sink { completion in
-				expectation.fulfill()
-			} receiveValue: { status in
-				XCTAssertEqual(status.state, .enabled)
-				XCTAssertEqual(status.blockedDomainCount, 92_699)
-			}.store(in: &cancellables)
-		wait(for: [expectation], timeout: 3)
-		
+		XCTAssertEqual(summary.dnsQueryTodayCount, 6673)
 	}
-
-	static var mockSession: URLSession {
-		URLProtocolMock.testURLs = MockJSON.endpoints.mapValues { $0.data(using: .utf8)! }
-		let config = URLSessionConfiguration.ephemeral
-		config.protocolClasses = [URLProtocolMock.self]
-		return URLSession(configuration: config)
+	
+	final func testDecodeClientData() throws {
+		let data = MockJSON.overTimeDataClients.data(using: .utf8)!
+		_ = try decoder.decode(PH10MinClientData.self, from: data)
+	}
+	
+	final func testDecodeTopQueries() throws {
+		let data = MockJSON.topItems.data(using: .utf8)!
+		_ = try decoder.decode(PHTopQueries.self, from: data)
+	}
+	final func testDecode10MinData() throws {
+		let data = MockJSON.overTimeData10Mins.data(using: .utf8)!
+		_ = try decoder.decode(PH10MinData.self, from: data)
 	}
 	
 	//TODO: Why Apple :/
     static var allTests = [
-        ("testGetHardwareInfo", testGetHardwareInfo),
+        ("testHashPassword", testHashPassword),
     ]
 }

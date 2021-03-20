@@ -20,7 +20,7 @@ public protocol PHResolver {
 		
 	func getTopQueries(_ instance: PHInstance, count: Int) -> AnyPublisher<PHTopQueries, PHResolverError>
 	
-	//func get10MinData(_ instance: PHInstance) -> AnyPublisher<PH10MinData, ResolverError>
+	func get10MinData(_ instance: PHInstance) -> AnyPublisher<PH10MinData, PHResolverError>
 	
 	func get10MinClientData(for instance: PHInstance) -> AnyPublisher<PH10MinClientData, PHResolverError>
 	
