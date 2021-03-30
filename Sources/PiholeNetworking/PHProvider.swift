@@ -18,8 +18,12 @@ public class PHProvider: PHResolver {
 	}
 	
 	public func verifyPassword(_ instance: PHInstance) -> AnyPublisher<Bool, PHResolverError> {
-		return Just(true)
-			.setFailureType(to: PHResolverError.self)
+		guard let url = URL(string: "http://\(instance.address)/admin/api.php?getQueryTypes&auth=\(instance.hashedPassword ?? "")")
+		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
+		return URLSession.shared.dataTaskPublisher(for: url)
+			.mapError { _ in PHResolverError.hostUnreacheable }
+			.map { String(data: $0.data, encoding: .utf8) }
+			.map { $0 != "[]" }
 			.eraseToAnyPublisher()
 	}
 	
