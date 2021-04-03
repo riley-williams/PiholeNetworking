@@ -8,38 +8,37 @@
 import Foundation
 import Combine
 
-public class PHProvider: PHResolver {
-	var session: URLSession = URLSession.shared
-	
-	public init() { }
-	
-	init(session: URLSession) {
+public class PHProvider {
+	private let session: PHSession
+	/// Initialize the provider
+	/// - Parameter session: Allows injection of a mock session
+	public init(session: URLSession = URLSession.shared) {
 		self.session = session
 	}
 	
-	public func verifyPassword(_ instance: PHInstance) -> AnyPublisher<Bool, PHResolverError> {
+	public func verifyPassword<T: PHInstance>(_ instance: T) -> AnyPublisher<Bool, PHResolverError> {
 		guard let url = URL(string: "http://\(instance.address)/admin/api.php?getQueryTypes&auth=\(instance.hashedPassword ?? "")")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
-		return URLSession.shared.dataTaskPublisher(for: url)
+		return session.simpleDataTaskPublisher(for: url)
 			.mapError { _ in PHResolverError.hostUnreacheable }
 			.map { String(data: $0.data, encoding: .utf8) }
 			.map { $0 != "[]" }
 			.eraseToAnyPublisher()
 	}
 	
-	public func getStatus(_ instance: PHInstance) -> AnyPublisher<PHStatus, PHResolverError> {
+	public func getStatus<T: PHInstance>(_ instance: T) -> AnyPublisher<PHStatus, PHResolverError> {
 		guard let url = URL(string: "http://\(instance.address)/admin/api.php?summaryRaw")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
 		return resultDecoderPublisher(url: url, type: PHStatus.self)
 	}
 	
-	public func getHWInfo(_ instance: PHInstance) -> AnyPublisher<PHHardwareInfo, PHResolverError> {
+	public func getHWInfo<T: PHInstance>(_ instance: T) -> AnyPublisher<PHHardwareInfo, PHResolverError> {
 		guard let url = URL(string: "http://\(instance.address)/admin/index.php")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
-		return URLSession.shared.dataTaskPublisher(for: url)
-			.map { String(data: $0.data, encoding: .utf8) }
+		return session.simpleDataTaskPublisher(for: url)
+			.map { String(data: $0, encoding: .utf8) }
 			.mapError { _ in PHResolverError.hostUnreacheable }
 			.tryMap { body in
 				guard let body = body,
@@ -49,29 +48,37 @@ public class PHProvider: PHResolver {
 					  let memoryRegex = try? NSRegularExpression(pattern: #"Memory usage:(?:&nbsp;)+([\d.]+)&thinsp;%"#, options: .caseInsensitive)
 				else { throw PHResolverError.decodingError }
 				
-				var hwInfo = PHHardwareInfo()
+				var cpuTemp: Float? = nil
+				var load1Min: Float? = nil
+				var load5Min: Float? = nil
+				var load15Min: Float? = nil
+				var memoryUsage: Float? = nil
 				
 				if let tempMatch = tempRegex.firstMatch(in: body, options: [], range: NSRange(location: 0, length: body.count)),
 				   let tempRange = Range(tempMatch.range(at: 1), in: body) {
-					hwInfo.cpuTemp = Float(body[tempRange])
+					cpuTemp = Float(body[tempRange])
 				} else if let tempMatch = tempLegacyRegex.firstMatch(in: body, options: [], range: NSRange(location: 0, length: body.count)),
 						  let tempRange = Range(tempMatch.range(at: 1), in: body) {
-					hwInfo.cpuTemp = Float(body[tempRange])
+					cpuTemp = Float(body[tempRange])
 				}
 				
 				if let loadMatches = loadRegex.firstMatch(in: body, options: [], range: NSRange(location: 0, length: body.count)),
 				   let loadRange1 = Range(loadMatches.range(at: 1), in: body),
 				   let loadRange2 = Range(loadMatches.range(at: 2), in: body),
 				   let loadRange3 = Range(loadMatches.range(at: 3), in: body) {
-					hwInfo.load1Min = Float(body[loadRange1])
-					hwInfo.load5Min = Float(body[loadRange2])
-					hwInfo.load15Min = Float(body[loadRange3])
+					load1Min = Float(body[loadRange1])
+					load5Min = Float(body[loadRange2])
+					load15Min = Float(body[loadRange3])
 				}
 				if let memoryMatch = memoryRegex.firstMatch(in: body, options: [], range: NSRange(location: 0, length: body.count)),
 				   let memRange = Range(memoryMatch.range(at: 1), in: body) {
-					hwInfo.memoryUsage = Float(body[memRange])
+					memoryUsage = Float(body[memRange])
 				}
-				return hwInfo
+				return PHHardwareInfo(cpuTemp: cpuTemp,
+									  load1Min: load1Min,
+									  load5Min: load5Min,
+									  load15Min: load15Min,
+									  memoryUsage: memoryUsage)
 			}.mapError { error in
 				switch error {
 				case let error as PHResolverError:
@@ -84,28 +91,28 @@ public class PHProvider: PHResolver {
 			}.eraseToAnyPublisher()
 	}
 	
-	public func getTopQueries(_ instance: PHInstance, count: Int) -> AnyPublisher<PHTopQueries, PHResolverError> {
+	public func getTopQueries<T: PHInstance>(_ instance: T, count: Int) -> AnyPublisher<PHTopQueries, PHResolverError> {
 		guard let token = instance.hashedPassword,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?topItems=25&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return resultDecoderPublisher(url: url, type: PHTopQueries.self)
 	}
 	
-	public func get10MinData(_ instance: PHInstance) -> AnyPublisher<PH10MinData, PHResolverError> {
+	public func get10MinData<T: PHInstance>(_ instance: T) -> AnyPublisher<PH10MinData, PHResolverError> {
 		guard let url = URL(string: "http://\(instance.address)/admin/api.php?overTimeData10mins")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return resultDecoderPublisher(url: url, type: PH10MinData.self)
 	}
 
 	
-	public func get10MinClientData(for instance: PHInstance) -> AnyPublisher<PH10MinClientData, PHResolverError> {
+	public func get10MinClientData<T: PHInstance>(for instance: T) -> AnyPublisher<PH10MinClientData, PHResolverError> {
 		guard let token = instance.hashedPassword,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?overTimeDataClients&getClientNames&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return resultDecoderPublisher(url: url, type: PH10MinClientData.self)
 	}
 	
-	public func enable(_ instance: PHInstance) -> AnyPublisher<PHState, PHResolverError> {
+	public func enable<T: PHInstance>(_ instance: T) -> AnyPublisher<PHState, PHResolverError> {
 		guard let token = instance.hashedPassword,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?enable&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
@@ -115,7 +122,7 @@ public class PHProvider: PHResolver {
 			.eraseToAnyPublisher()
 	}
 	
-	public func disable(_ instance: PHInstance, _ duration: Int?) -> AnyPublisher<PHState, PHResolverError> {
+	public func disable<T: PHInstance>(_ instance: T, _ duration: Int?) -> AnyPublisher<PHState, PHResolverError> {
 		var arg = "disable"
 		if let duration = duration {
 			arg += "=\(duration)"
@@ -130,8 +137,7 @@ public class PHProvider: PHResolver {
 	}
 	
 	private func resultDecoderPublisher<T: Decodable>(url: URL, type:T.Type) -> AnyPublisher<T, PHResolverError> {
-		URLSession.shared.dataTaskPublisher(for: url)
-			.map { $0.data }
+		session.simpleDataTaskPublisher(for: url)
 			.decode(type: T.self, decoder: JSONDecoder())
 			.mapError { (error) -> PHResolverError in
 				switch error {

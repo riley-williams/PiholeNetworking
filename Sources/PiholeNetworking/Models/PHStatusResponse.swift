@@ -8,5 +8,5 @@
 import Foundation
 
 struct PHStatusResponse: Codable {
-	var state: PHState
+	let state: PHState
 }

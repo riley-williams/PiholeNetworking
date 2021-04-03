@@ -9,17 +9,17 @@ import Foundation
 import CryptoKit
 
 public protocol PHInstance {
-	var hostname: String { get }
-	var port: Int { get }
-	var password: String? { get }
+	associatedtype IntType: BinaryInteger
+	var ip: String { get }
+	var port: IntType { get }
+	var password: String { get }
 }
 
-extension PHInstance {
-	var address: String { "\(hostname):\(port)" }
+public extension PHInstance {
+	var address: String { "\(ip):\(port)" }
 	
 	var hashedPassword: String? {
-		if let password = password,
-		   let data = password.data(using: .utf8) {
+		if let data = password.data(using: .utf8) {
 			let hash = SHA256.hash(data: data)
 			let stringifiedHash = hash.compactMap { String(format: "%02x", $0) }.joined().lowercased()
 			if let data = stringifiedHash.data(using: .utf8) {

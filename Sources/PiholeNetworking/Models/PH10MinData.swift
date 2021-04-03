@@ -8,8 +8,8 @@
 import Foundation
 
 public struct PH10MinData: Codable {
-	public var ads: [String: Int]
-	public var domains: [String: Int]
+	public let ads: [String: Int]
+	public let domains: [String: Int]
 	
 	enum CodingKeys: String, CodingKey {
 		case ads = "ads_over_time"

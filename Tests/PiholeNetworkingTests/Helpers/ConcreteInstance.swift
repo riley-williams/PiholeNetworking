@@ -8,14 +8,17 @@
 import PiholeNetworking
 import Foundation
 
-struct ConcreteInstance: PHInstance {
-	var hostname: String
+class ConcreteInstance: PHInstance {
+	var ip: String
 	var port: Int
-	var password: String?
+	var password: String
 
-	init(hostname: String, port: Int = 80, password: String? = nil) {
-		self.hostname = hostname
+	init(_ hostname: String, port: Int = 80, password: String = "") {
+		self.ip = hostname
 		self.port = port
 		self.password = password
 	}
 }
+
+extension ConcreteInstance: Comparable { }
+extension ConcreteInstance: Hashable { }

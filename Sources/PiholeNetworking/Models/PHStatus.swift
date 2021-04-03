@@ -8,17 +8,17 @@
 import Foundation
 
 public struct PHStatus: Codable {
-	public var state:PHState = .unknown
-	public var blockedDomainCount:Int = 0
-	public var dnsQueryTodayCount:Int = 0
-	public var adsBlockedTodayCount:Int = 0
-	public var uniqueDomainCount:Int = 0
-	public var forwardedQueryCount:Int = 0
-	public var cachedQueryCount:Int = 0
-	public var totalClientsCount:Int = 0
-	public var uniqueClientCount:Int = 0
-	public var totalDNSCount:Int = 0
-	public var percentAdsToday:Float = 0
+	public let state:PHState = .unknown
+	public let blockedDomainCount:Int
+	public let dnsQueryTodayCount:Int
+	public let adsBlockedTodayCount:Int
+	public let uniqueDomainCount:Int
+	public let forwardedQueryCount:Int
+	public let cachedQueryCount:Int
+	public let totalClientsCount:Int
+	public let uniqueClientCount:Int
+	public let totalDNSCount:Int
+	public let percentAdsToday:Float
 	
 	public init(state:PHState = .unknown,
 				blockedDomainCount:Int = 0,
