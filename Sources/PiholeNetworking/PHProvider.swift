@@ -21,7 +21,7 @@ public class PHProvider {
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return session.simpleDataTaskPublisher(for: url)
 			.mapError { _ in PHResolverError.hostUnreacheable }
-			.map { String(data: $0.data, encoding: .utf8) }
+			.map { String(data: $0, encoding: .utf8) }
 			.map { $0 != "[]" }
 			.eraseToAnyPublisher()
 	}
