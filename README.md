@@ -1,3 +1,3 @@
 # PiholeNetworking
 
-A description of this package.
+Open source networking library for interacting with Pi-hole DNS blocker instances
