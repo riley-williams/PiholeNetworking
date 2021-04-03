@@ -9,15 +9,15 @@ import Foundation
 
 public struct PHHardwareInfo {
 	/// The CPU temperature in Celcius
-	public let cpuTemp: Float?
+	public var cpuTemp: Float?
 	/// CPU load for the past 1 minute
-	public let load1Min: Float?
+	public var load1Min: Float?
 	/// CPU load for the past 5 minutes
-	public let load5Min: Float?
+	public var load5Min: Float?
 	/// CPU load for the past 15 minutes
-	public let load15Min: Float?
+	public var load15Min: Float?
 	/// Memory usage
-	public let memoryUsage: Float?
+	public var memoryUsage: Float?
 	
 	public init(cpuTemp: Float? = nil,
 				load1Min: Float? = nil,

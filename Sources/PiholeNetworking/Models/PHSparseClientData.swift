@@ -9,7 +9,7 @@ import Foundation
 
 public struct PHSparseClientData: Codable {
 	/// Sparse results of historic client record activity
-	public let records: [PHClient: [PHClientRecord]]
+	public var records: [PHClient: [PHClientRecord]]
 	
 	public init(data: PH10MinClientData) {
 		var records: [PHClient: [PHClientRecord]] = [:]

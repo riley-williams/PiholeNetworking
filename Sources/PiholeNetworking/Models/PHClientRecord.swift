@@ -9,9 +9,9 @@ import Foundation
 
 public struct PHClientRecord: Codable {
 	/// Time this record was recorded
-	public let timestamp: Int
+	public var timestamp: Int
 	/// Number of requests from a specific client
-	public let count: Int
+	public var count: Int
 	
 	public init(timestamp: Int, count: Int) {
 		self.timestamp = timestamp

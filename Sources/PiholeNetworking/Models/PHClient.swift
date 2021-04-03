@@ -9,8 +9,8 @@
 import Foundation
 
 public struct PHClient {
-	public let name: String
-	public let ip: String
+	public var name: String
+	public var ip: String
 	
 	public init(name: String, ip: String) {
 		self.name = name

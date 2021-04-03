@@ -8,8 +8,8 @@
 import Foundation
 
 public struct PHTopQueries: Codable {
-	public let topPassed: [String: Int]
-	public let topBlocked: [String: Int]
+	public var topPassed: [String: Int]
+	public var topBlocked: [String: Int]
 	
 	public init(topPassed: [String: Int], topBlocked: [String: Int]) {
 		self.topPassed = topPassed
