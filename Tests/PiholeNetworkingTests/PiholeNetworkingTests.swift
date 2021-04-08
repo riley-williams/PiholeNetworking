@@ -14,12 +14,12 @@ final class PiholeNetworkingTests: XCTestCase {
 	final func testHashPassword() throws {
 		let instance = ConcreteInstance("1.2.3.4", port: 80, password: "8MzrcBRm")
 		
-		XCTAssertEqual(instance.hashedPassword, "af90e024ac7f515011ae0c9b326a7e9ff7a00fa9d7f770d323c848f12659e3b9")
+		XCTAssertEqual(instance.apiKey, "af90e024ac7f515011ae0c9b326a7e9ff7a00fa9d7f770d323c848f12659e3b9")
 	}
 	
 	final func testHashNilPassword() throws {
 		let instance = ConcreteInstance("1.2.3.4")
-		XCTAssertNil(instance.hashedPassword)
+		XCTAssertNil(instance.apiKey)
 	}
 	
 	final func testGetSummary() throws {

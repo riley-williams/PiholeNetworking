@@ -26,7 +26,7 @@ public class PHProvider {
 	/// - Parameters:
 	///   - instance: The Pi-hole instance to connect to
 	public func verifyPassword<T: PHInstance>(_ instance: T) -> AnyPublisher<Bool, PHProviderError> {
-		guard let url = URL(string: "http://\(instance.address)/admin/api.php?getQueryTypes&auth=\(instance.hashedPassword ?? "")")
+		guard let url = URL(string: "http://\(instance.address)/admin/api.php?getQueryTypes&auth=\(instance.apiKey ?? "")")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return session.simpleDataTaskPublisher(for: url)
 			.mapPiholeNetworkingError()
@@ -109,7 +109,7 @@ public class PHProvider {
 	///   - instance: The Pi-hole instance to connect to
 	///   - count: The number of queries to request. This may be greater than the number of queries returned
 	public func getTopQueries<T: PHInstance>(_ instance: T, count: Int) -> AnyPublisher<PHTopQueries, PHProviderError> {
-		guard let token = instance.hashedPassword,
+		guard let token = instance.apiKey,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?topItems=\(count)&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return resultDecoderPublisher(url: url, type: PHTopQueries.self)
@@ -130,7 +130,7 @@ public class PHProvider {
 	/// Requires authentication for full client data
 	/// - Parameter instance: The Pi-hole instance to connect to
 	public func getClientTimeline<T: PHInstance>(_ instance: T) -> AnyPublisher<PHClientTimeline, PHProviderError> {
-		guard let token = instance.hashedPassword,
+		guard let token = instance.apiKey,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?overTimeDataClients&getClientNames&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return resultDecoderPublisher(url: url, type: PHClientTimeline.self)
@@ -141,7 +141,7 @@ public class PHProvider {
 	/// Requires authentication
 	/// - Parameter instance: The Pi-hole instance to connect to
 	public func getForwardDestinations<T: PHInstance>(_ instance: T) -> AnyPublisher<[PHForwardDestination: Float], PHProviderError> {
-		guard let token = instance.hashedPassword,
+		guard let token = instance.apiKey,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?getForwardDestinations&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
@@ -162,7 +162,7 @@ public class PHProvider {
 	/// - Parameter instance: The Pi-hole instance to enable
 	/// - Returns: The state as reported by Pi-hole after this operation
 	public func enable<T: PHInstance>(_ instance: T) -> AnyPublisher<PHState, PHProviderError> {
-		guard let token = instance.hashedPassword,
+		guard let token = instance.apiKey,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?enable&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
@@ -186,7 +186,7 @@ public class PHProvider {
 		if let duration = duration {
 			arg += "=\(duration)"
 		}
-		guard let token = instance.hashedPassword,
+		guard let token = instance.apiKey,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?\(arg)&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
