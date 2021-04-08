@@ -9,12 +9,15 @@
 import Foundation
 
 public struct PHClient {
-	public var name: String
+	/// The IP address of this client
 	public var ip: String
+	/// The name associated with this client, typically postfixed with the search domain.
+	/// e.g. `Mabbook-Pro.DOMAIN`
+	public var name: String?
 	
-	public init(name: String, ip: String) {
-		self.name = name
+	public init(ip: String, name: String? = nil) {
 		self.ip = ip
+		self.name = name
 	}
 }
 
@@ -28,11 +31,13 @@ extension PHClient: Hashable {
 
 extension PHClient: Comparable {
 	public static func < (lhs: PHClient, rhs: PHClient) -> Bool {
-		if lhs.name.isEmpty && !rhs.name.isEmpty {
+		let lhsName = lhs.name ?? ""
+		let rhsName = rhs.name ?? ""
+		if lhsName.isEmpty && !rhsName.isEmpty {
 			return false
-		} else if !lhs.name.isEmpty && rhs.name.isEmpty {
+		} else if !lhsName.isEmpty && rhsName.isEmpty {
 			return true
-		} else if lhs.name.isEmpty && rhs.name.isEmpty {
+		} else if lhsName.isEmpty && rhsName.isEmpty {
 			let lhsComponents = lhs.ip
 				.components(separatedBy: ".")
 				.map { String($0.reversed()) }
@@ -47,7 +52,7 @@ extension PHClient: Comparable {
 				.reduce("", +)
 			return lhsComponents < rhsComponents
 		} else {
-			return lhs.name < rhs.name
+			return lhsName < rhsName
 		}
 	}
 	

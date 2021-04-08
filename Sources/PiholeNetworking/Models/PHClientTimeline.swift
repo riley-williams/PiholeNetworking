@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PH10MinClientData: Codable {
+public struct PHClientTimeline: Codable {
 	public var clients: [PHClient]
 	public var timestamps: [String:[Int]]
 	

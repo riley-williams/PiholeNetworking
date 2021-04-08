@@ -10,43 +10,63 @@ import Combine
 
 public class PHProvider {
 	private let session: PHSession
+	
 	/// Initialize the provider
+	///
+	/// The session parameter allows you to pass a custom `PHSession` which can be used to inject mock data or failures
+	/// in order to unit test more effectively
 	/// - Parameter session: Allows injection of a mock session
 	public init(session: URLSession = URLSession.shared) {
 		self.session = session
 	}
 	
-	public func verifyPassword<T: PHInstance>(_ instance: T) -> AnyPublisher<Bool, PHResolverError> {
+	/// Returns the summary for the past 24 hours
+	///
+	/// Does not require authentication
+	/// - Parameters:
+	///   - instance: The Pi-hole instance to connect to
+	public func verifyPassword<T: PHInstance>(_ instance: T) -> AnyPublisher<Bool, PHProviderError> {
 		guard let url = URL(string: "http://\(instance.address)/admin/api.php?getQueryTypes&auth=\(instance.hashedPassword ?? "")")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return session.simpleDataTaskPublisher(for: url)
-			.mapError { _ in PHResolverError.hostUnreacheable }
+			.mapError { _ in PHProviderError.hostUnreacheable }
 			.map { String(data: $0, encoding: .utf8) }
 			.map { $0 != "[]" }
 			.eraseToAnyPublisher()
 	}
 	
-	public func getStatus<T: PHInstance>(_ instance: T) -> AnyPublisher<PHStatus, PHResolverError> {
+	/// Returns the summary for the past 24 hours
+	///
+	/// Does not require authentication
+	/// - Parameters:
+	///   - instance: The Pi-hole instance to connect to
+	public func getStatus<T: PHInstance>(_ instance: T) -> AnyPublisher<PHSummary, PHProviderError> {
 		guard let url = URL(string: "http://\(instance.address)/admin/api.php?summaryRaw")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
-		return resultDecoderPublisher(url: url, type: PHStatus.self)
+		return resultDecoderPublisher(url: url, type: PHSummary.self)
 	}
 	
-	public func getHWInfo<T: PHInstance>(_ instance: T) -> AnyPublisher<PHHardwareInfo, PHResolverError> {
+	/// Retrieves various datapoints by scraping the /admin/index.php dashboard.
+	/// Be careful calling this too frequently as there is a high overhead for the host to render this page
+	///
+	///	Does not require authentication
+	/// - Warning: Because this method does not use an official API, it may break partially or completely after a Pi-hole release
+	/// - Parameter instance: The Pi-hole instance to connect to
+	public func getHWInfo<T: PHInstance>(_ instance: T) -> AnyPublisher<PHHardwareInfo, PHProviderError> {
 		guard let url = URL(string: "http://\(instance.address)/admin/index.php")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
 		return session.simpleDataTaskPublisher(for: url)
 			.map { String(data: $0, encoding: .utf8) }
-			.mapError { _ in PHResolverError.hostUnreacheable }
+			.mapError { _ in PHProviderError.hostUnreacheable }
 			.tryMap { body in
 				guard let body = body,
 					  let tempRegex = try? NSRegularExpression(pattern: #"<span id="rawtemp" hidden>([\d]*[\.]?[\d]*)<\/span>"#, options: .caseInsensitive),
 					  let tempLegacyRegex = try? NSRegularExpression(pattern: "Temp:&nbsp;([\\d.]+)&nbsp;&deg;([F|C])", options: .caseInsensitive),
 					  let loadRegex = try? NSRegularExpression(pattern: #"Load:(?:&nbsp;)+([\d.]+)(?:&nbsp;)+([\d.]+)(?:&nbsp;)+([\d.]+)"#, options: .caseInsensitive),
 					  let memoryRegex = try? NSRegularExpression(pattern: #"Memory usage:(?:&nbsp;)+([\d.]+)&thinsp;%"#, options: .caseInsensitive)
-				else { throw PHResolverError.decodingError }
+				else { throw PHProviderError.decodingError }
 				
 				var cpuTemp: Float? = nil
 				var load1Min: Float? = nil
@@ -81,7 +101,7 @@ public class PHProvider {
 									  memoryUsage: memoryUsage)
 			}.mapError { error in
 				switch error {
-				case let error as PHResolverError:
+				case let error as PHProviderError:
 					return error
 				case let error as URLError:
 					return .urlError(error: error)
@@ -91,28 +111,45 @@ public class PHProvider {
 			}.eraseToAnyPublisher()
 	}
 	
-	public func getTopQueries<T: PHInstance>(_ instance: T, count: Int) -> AnyPublisher<PHTopQueries, PHResolverError> {
+	/// Returns the top passed and blocked queries over the past 24 hours, along with the counts for each
+	///
+	/// Requires authentication
+	/// - Parameters:
+	///   - instance: The Pi-hole instance to connect to
+	///   - count: The number of queries to request. This may be greater than the number of queries returned
+	public func getTopQueries<T: PHInstance>(_ instance: T, count: Int) -> AnyPublisher<PHTopQueries, PHProviderError> {
 		guard let token = instance.hashedPassword,
-			  let url = URL(string: "http://\(instance.address)/admin/api.php?topItems=25&auth=\(token)")
+			  let url = URL(string: "http://\(instance.address)/admin/api.php?topItems=\(count)&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return resultDecoderPublisher(url: url, type: PHTopQueries.self)
 	}
 	
-	public func get10MinData<T: PHInstance>(_ instance: T) -> AnyPublisher<PH10MinData, PHResolverError> {
+	/// Returns the passed/blocked data for the past 24 hours, split into 10 minute intervals
+	///
+	/// Does not require authentication
+	/// - Parameter instance: The Pi-hole instance to connect to
+	public func getRequestRatioTimeline<T: PHInstance>(_ instance: T) -> AnyPublisher<PHRequestRatioTimeline, PHProviderError> {
 		guard let url = URL(string: "http://\(instance.address)/admin/api.php?overTimeData10mins")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
-		return resultDecoderPublisher(url: url, type: PH10MinData.self)
+		return resultDecoderPublisher(url: url, type: PHRequestRatioTimeline.self)
 	}
-
 	
-	public func get10MinClientData<T: PHInstance>(for instance: T) -> AnyPublisher<PH10MinClientData, PHResolverError> {
+	/// Returns the request count, by client, for the past 24 hours
+	/// Requires authentication for full client data
+	/// - Parameter instance: The Pi-hole instance to connect to
+	public func getClientTimeline<T: PHInstance>(for instance: T) -> AnyPublisher<PHClientTimeline, PHProviderError> {
 		guard let token = instance.hashedPassword,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?overTimeDataClients&getClientNames&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
-		return resultDecoderPublisher(url: url, type: PH10MinClientData.self)
+		return resultDecoderPublisher(url: url, type: PHClientTimeline.self)
 	}
 	
-	public func enable<T: PHInstance>(_ instance: T) -> AnyPublisher<PHState, PHResolverError> {
+	/// Enables a Pi-hole
+	///
+	/// Requires authentication
+	/// - Parameter instance: The Pi-hole instance to enable
+	/// - Returns: The state as reported by Pi-hole after this operation
+	public func enable<T: PHInstance>(_ instance: T) -> AnyPublisher<PHState, PHProviderError> {
 		guard let token = instance.hashedPassword,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?enable&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
@@ -122,7 +159,17 @@ public class PHProvider {
 			.eraseToAnyPublisher()
 	}
 	
-	public func disable<T: PHInstance>(_ instance: T, _ duration: Int?) -> AnyPublisher<PHState, PHResolverError> {
+	/// Disables a Pi-hole
+	///
+	/// Requires authentication
+	/// - Bug: Every time `disable` is called, a background timer is created that will re-enable Pi-hole after the specified duration.
+	/// As of Pi-hole **v5.2.4** these timers are not invalidated after the Pi-hole has been enabled.
+	/// This behavior can be reproduced by disabling for 30 seconds, enabling, and then disabling for 1 minute.
+	/// The Pi-hole will be re-enabled after 30 seconds, and again at 1 minute.
+	/// - Parameter instance: The Pi-hole instance to disable
+	/// - Parameter duration: The duration to disable the Pi-hole. Omitting this parameter will disable indefinitely
+	/// - Returns: The state as reported by Pi-hole after this operation
+	public func disable<T: PHInstance>(_ instance: T, _ duration: Int? = nil) -> AnyPublisher<PHState, PHProviderError> {
 		var arg = "disable"
 		if let duration = duration {
 			arg += "=\(duration)"
@@ -136,10 +183,10 @@ public class PHProvider {
 			.eraseToAnyPublisher()
 	}
 	
-	private func resultDecoderPublisher<T: Decodable>(url: URL, type:T.Type) -> AnyPublisher<T, PHResolverError> {
+	private func resultDecoderPublisher<T: Decodable>(url: URL, type:T.Type) -> AnyPublisher<T, PHProviderError> {
 		session.simpleDataTaskPublisher(for: url)
 			.decode(type: T.self, decoder: JSONDecoder())
-			.mapError { (error) -> PHResolverError in
+			.mapError { (error) -> PHProviderError in
 				switch error {
 				case is DecodingError:
 					return .decodingError

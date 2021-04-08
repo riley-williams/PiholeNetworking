@@ -16,7 +16,7 @@ public struct PHHardwareInfo {
 	public var load5Min: Float?
 	/// CPU load for the past 15 minutes
 	public var load15Min: Float?
-	/// Memory usage
+	/// Current memory usage
 	public var memoryUsage: Float?
 	
 	public init(cpuTemp: Float? = nil,

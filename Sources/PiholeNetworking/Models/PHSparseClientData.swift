@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  PHSparseClientTimeline.swift
 //  
 //
 //  Created by Riley Williams on 3/21/21.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-public struct PHSparseClientData: Codable {
+public struct PHSparseClientTimeline: Codable {
 	/// Sparse results of historic client record activity
 	public var records: [PHClient: [PHClientRecord]]
 	
-	public init(data: PH10MinClientData) {
+	public init(data: PHClientTimeline) {
 		var records: [PHClient: [PHClientRecord]] = [:]
 		// Seed the dictionary keys
 		data.clients.forEach { records[$0] = [] }

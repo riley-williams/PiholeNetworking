@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  PHSummary.swift
 //  
 //
 //  Created by Riley Williams on 3/13/21.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PHStatus: Codable {
+public struct PHSummary: Codable {
 	public var state:PHState = .unknown
 	public var blockedDomainCount:Int
 	public var dnsQueryTodayCount:Int
