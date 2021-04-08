@@ -8,9 +8,8 @@
 import Foundation
 
 public enum PHProviderError: Error {
-	case timeout
-	case hostUnreacheable
 	case authenticationRequired
+	/// A URL could not be constructed using the hostname provided
 	case invalidHostname
 	case decodingError
 	case urlError(error: URLError)

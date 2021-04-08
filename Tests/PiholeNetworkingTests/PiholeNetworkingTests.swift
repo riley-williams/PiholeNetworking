@@ -22,11 +22,24 @@ final class PiholeNetworkingTests: XCTestCase {
 		XCTAssertNil(instance.hashedPassword)
 	}
 	
-	final func testDecodeSummaryRaw() throws {
-		let data = MockJSON.summaryRaw.data(using: .utf8)!
-		let summary = try decoder.decode(PHSummary.self, from: data)
+	final func testGetSummary() throws {
+		let session = DisposableMockSession(result: MockJSON.summaryRaw)
+		let provider = PHProvider(session: session)
 		
-		XCTAssertEqual(summary.dnsQueryTodayCount, 6673)
+		let promise = XCTestExpectation()
+		let cancellable = provider.getSummary(ConcreteInstance("1.2.3.4"))
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { summary in
+				XCTAssertEqual(summary.dnsQueryTodayCount, 6673)
+				promise.fulfill()
+			}
+		wait(for: [promise], timeout: 1)
 	}
 	
 	final func testDecodeClientData() throws {
@@ -50,6 +63,30 @@ final class PiholeNetworkingTests: XCTestCase {
 		measure {
 			let _ = PHSparseClientTimeline(data: clientData)
 		}
+	}
+	
+	final func testGetForwardingDestinations() throws {
+		let data = MockJSON.getForwardDestinations.data(using: .utf8)!
+		_ = try decoder.decode([String:[PHForwardDestination:Float]].self, from: data)
+		
+		
+		let session = DisposableMockSession(result: MockJSON.getForwardDestinations)
+		let provider = PHProvider(session: session)
+		
+		let promise = XCTestExpectation()
+		let cancellable = provider.getForwardDestinations(ConcreteInstance("1.2.3.4", password: "123"))
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { destinations in
+				print(destinations)
+				promise.fulfill()
+			}
+		wait(for: [promise], timeout: 1)
 	}
 	
 	func testInstanceSorting() throws {

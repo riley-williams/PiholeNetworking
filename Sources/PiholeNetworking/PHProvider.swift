@@ -16,7 +16,7 @@ public class PHProvider {
 	/// The session parameter allows you to pass a custom `PHSession` which can be used to inject mock data or failures
 	/// in order to unit test more effectively
 	/// - Parameter session: Allows injection of a mock session
-	public init(session: URLSession = URLSession.shared) {
+	public init(session: PHSession = URLSession.shared) {
 		self.session = session
 	}
 	
@@ -29,7 +29,7 @@ public class PHProvider {
 		guard let url = URL(string: "http://\(instance.address)/admin/api.php?getQueryTypes&auth=\(instance.hashedPassword ?? "")")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return session.simpleDataTaskPublisher(for: url)
-			.mapError { _ in PHProviderError.hostUnreacheable }
+			.mapPiholeNetworkingError()
 			.map { String(data: $0, encoding: .utf8) }
 			.map { $0 != "[]" }
 			.eraseToAnyPublisher()
@@ -40,7 +40,7 @@ public class PHProvider {
 	/// Does not require authentication
 	/// - Parameters:
 	///   - instance: The Pi-hole instance to connect to
-	public func getStatus<T: PHInstance>(_ instance: T) -> AnyPublisher<PHSummary, PHProviderError> {
+	public func getSummary<T: PHInstance>(_ instance: T) -> AnyPublisher<PHSummary, PHProviderError> {
 		guard let url = URL(string: "http://\(instance.address)/admin/api.php?summaryRaw")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
@@ -59,7 +59,6 @@ public class PHProvider {
 		
 		return session.simpleDataTaskPublisher(for: url)
 			.map { String(data: $0, encoding: .utf8) }
-			.mapError { _ in PHProviderError.hostUnreacheable }
 			.tryMap { body in
 				guard let body = body,
 					  let tempRegex = try? NSRegularExpression(pattern: #"<span id="rawtemp" hidden>([\d]*[\.]?[\d]*)<\/span>"#, options: .caseInsensitive),
@@ -99,16 +98,8 @@ public class PHProvider {
 									  load5Min: load5Min,
 									  load15Min: load15Min,
 									  memoryUsage: memoryUsage)
-			}.mapError { error in
-				switch error {
-				case let error as PHProviderError:
-					return error
-				case let error as URLError:
-					return .urlError(error: error)
-				default:
-					return .other(error: error)
-				}
-			}.eraseToAnyPublisher()
+			}.mapPiholeNetworkingError()
+			.eraseToAnyPublisher()
 	}
 	
 	/// Returns the top passed and blocked queries over the past 24 hours, along with the counts for each
@@ -135,14 +126,35 @@ public class PHProvider {
 	}
 	
 	/// Returns the request count, by client, for the past 24 hours
+	///
 	/// Requires authentication for full client data
 	/// - Parameter instance: The Pi-hole instance to connect to
-	public func getClientTimeline<T: PHInstance>(for instance: T) -> AnyPublisher<PHClientTimeline, PHProviderError> {
+	public func getClientTimeline<T: PHInstance>(_ instance: T) -> AnyPublisher<PHClientTimeline, PHProviderError> {
 		guard let token = instance.hashedPassword,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?overTimeDataClients&getClientNames&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return resultDecoderPublisher(url: url, type: PHClientTimeline.self)
 	}
+	
+	/// Returns the breakdown of forward destinations over the past 24 hours
+	///
+	/// Requires authentication
+	/// - Parameter instance: The Pi-hole instance to connect to
+	public func getForwardDestinations<T: PHInstance>(_ instance: T) -> AnyPublisher<[PHForwardDestination: Float], PHProviderError> {
+		guard let token = instance.hashedPassword,
+			  let url = URL(string: "http://\(instance.address)/admin/api.php?getForwardDestinations&auth=\(token)")
+		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
+		
+		return session.simpleDataTaskPublisher(for: url)
+			.decode(type: [String: [PHForwardDestination: Float]].self, decoder: JSONDecoder())
+			.tryMap {
+				guard let forwardDestinations = $0["forward_destinations"]
+				else { throw PHProviderError.decodingError }
+				return forwardDestinations
+			}.mapPiholeNetworkingError()
+			.eraseToAnyPublisher()
+	}
+	
 	
 	/// Enables a Pi-hole
 	///
@@ -186,15 +198,7 @@ public class PHProvider {
 	private func resultDecoderPublisher<T: Decodable>(url: URL, type:T.Type) -> AnyPublisher<T, PHProviderError> {
 		session.simpleDataTaskPublisher(for: url)
 			.decode(type: T.self, decoder: JSONDecoder())
-			.mapError { (error) -> PHProviderError in
-				switch error {
-				case is DecodingError:
-					return .decodingError
-				case let error as URLError:
-					return .urlError(error: error)
-				default:
-					return .other(error: error)
-				}
-			}.eraseToAnyPublisher()
+			.mapPiholeNetworkingError()
+			.eraseToAnyPublisher()
 	}
 }
