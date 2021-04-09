@@ -6,6 +6,8 @@ final class PiholeNetworkingTests: XCTestCase {
 	let instance = ConcreteInstance("256.0.0.0")
 	var cancellables: Set<AnyCancellable> = []
 	let decoder = JSONDecoder()
+	let unauthenticatedInstance = ConcreteInstance("1.2.3.4")
+	let authenticatedInstance = ConcreteInstance("1.2.3.4", password: "1234")
 	
 	override func setUp() {
 		
@@ -23,11 +25,11 @@ final class PiholeNetworkingTests: XCTestCase {
 	}
 	
 	final func testGetSummary() throws {
-		let session = DisposableMockSession(result: MockJSON.summaryRaw)
+		let session = MockSession(result: MockJSON.summaryRaw)
 		let provider = PHProvider(session: session)
 		
 		let promise = XCTestExpectation()
-		let cancellable = provider.getSummary(ConcreteInstance("1.2.3.4"))
+		provider.getSummary(ConcreteInstance("1.2.3.4"))
 			.sink { completion in
 				switch completion {
 				case .finished: break
@@ -38,7 +40,7 @@ final class PiholeNetworkingTests: XCTestCase {
 			} receiveValue: { summary in
 				XCTAssertEqual(summary.dnsQueryTodayCount, 6673)
 				promise.fulfill()
-			}
+			}.store(in: &cancellables)
 		wait(for: [promise], timeout: 1)
 	}
 	
@@ -48,12 +50,29 @@ final class PiholeNetworkingTests: XCTestCase {
 	}
 	
 	final func testDecodeTopQueries() throws {
+		
 		let data = MockJSON.topItems.data(using: .utf8)!
 		_ = try decoder.decode(PHTopQueries.self, from: data)
 	}
 	final func testDecode10MinData() throws {
-		let data = MockJSON.overTimeData10Mins.data(using: .utf8)!
-		_ = try decoder.decode(PHRequestRatioTimeline.self, from: data)
+		let session = MockSession(result: MockJSON.overTimeData10Mins)
+		let provider = PHProvider(session: session)
+		
+		let promise = XCTestExpectation()
+		provider.getRequestRatioTimeline(authenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { timeline in
+				XCTAssertEqual(timeline.domains["1615774500"], 37)
+				XCTAssertEqual(timeline.ads["1615824300"], 24)
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
 	}
 	
 	final func testSparseClientTimelineResponse() throws {
@@ -66,15 +85,11 @@ final class PiholeNetworkingTests: XCTestCase {
 	}
 	
 	final func testGetForwardingDestinations() throws {
-		let data = MockJSON.getForwardDestinations.data(using: .utf8)!
-		_ = try decoder.decode([String:[PHForwardDestination:Float]].self, from: data)
-		
-		
-		let session = DisposableMockSession(result: MockJSON.getForwardDestinations)
+		let session = MockSession(result: MockJSON.getForwardDestinations)
 		let provider = PHProvider(session: session)
 		
 		let promise = XCTestExpectation()
-		let cancellable = provider.getForwardDestinations(ConcreteInstance("1.2.3.4", password: "123"))
+		provider.getForwardDestinations(authenticatedInstance)
 			.sink { completion in
 				switch completion {
 				case .finished: break
@@ -85,7 +100,7 @@ final class PiholeNetworkingTests: XCTestCase {
 			} receiveValue: { destinations in
 				print(destinations)
 				promise.fulfill()
-			}
+			}.store(in: &cancellables)
 		wait(for: [promise], timeout: 1)
 	}
 	

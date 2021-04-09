@@ -14,8 +14,21 @@ public class PHProvider {
 	/// Initialize the provider
 	///
 	/// The session parameter allows you to pass a custom `PHSession` which can be used to inject mock data or failures
-	/// in order to unit test more effectively
-	/// - Parameter session: Allows injection of a mock session
+	/// in order to unit test more effectively.
+	/// # Example
+	/// ~~~
+	/// /// Always publishes the provided object, encoded with a JSON Encoder.
+	///	struct MockSession<T: StringProtocol>: PHSession {
+	///	    var result: T
+	///	    func simpleDataTaskPublisher(for: URL) -> AnyPublisher<Data, URLError> {
+	///	        Just(result)
+	///	            .compactMap { $0.data(using: .utf8) }
+	///	            .setFailureType(to: URLError.self)
+	///	            .eraseToAnyPublisher()
+	///	 	}
+	/// }
+	/// ~~~
+	/// - Parameter session: Allows injection of a mock session, defaults to `URLSession.shared` if omitted
 	public init(session: PHSession = URLSession.shared) {
 		self.session = session
 	}

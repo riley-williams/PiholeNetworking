@@ -9,15 +9,12 @@ import Foundation
 import PiholeNetworking
 import Combine
 
-struct DisposableMockSession: PHSession {
-	var result: Data
-	
-	init(result: String) {
-		self.result = result.data(using: .utf8)!
-	}
-	
+/// Always publishes the provided object, encoded with a JSON Encoder.
+struct MockSession<T: StringProtocol>: PHSession {
+	var result: T
 	func simpleDataTaskPublisher(for: URL) -> AnyPublisher<Data, URLError> {
-		return Just(result)
+		Just(result)
+			.compactMap { $0.data(using: .utf8) }
 			.setFailureType(to: URLError.self)
 			.eraseToAnyPublisher()
 	}
