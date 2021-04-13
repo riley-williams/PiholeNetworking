@@ -10,6 +10,7 @@ import Combine
 
 public class PHProvider {
 	private let session: PHSession
+	private let decoder: JSONDecoder
 	
 	/// Initialize the provider
 	///
@@ -31,6 +32,8 @@ public class PHProvider {
 	/// - Parameter session: Allows injection of a mock session, defaults to `URLSession.shared` if omitted
 	public init(session: PHSession = URLSession.shared) {
 		self.session = session
+		self.decoder = JSONDecoder()
+		self.decoder.dateDecodingStrategy = .secondsSince1970
 	}
 	
 	/// Verifies a password by attempting to access an endpoint that requires authentication
@@ -292,13 +295,13 @@ public class PHProvider {
 	/// Provides convenient handling of errors due to networking, decoding, and authentication
 	private func resultDecoderPublisher<T: Decodable>(url: URL, type:T.Type) -> AnyPublisher<T, PHProviderError> {
 		session.simpleDataTaskPublisher(for: url)
-			.tryMap { result in
+			.tryMap { [decoder] result in
 				// Pihole returns "[]" when authentication is required
-				if let obj = try? JSONDecoder().decode([Int].self, from: result),
+				if let obj = try? decoder.decode([Int].self, from: result),
 				   obj.isEmpty {
 					throw PHProviderError.authenticationRequired
 				}
-				return try JSONDecoder().decode(T.self, from: result)
+				return try decoder.decode(T.self, from: result)
 			}
 			.mapPiholeNetworkingError()
 			.eraseToAnyPublisher()
