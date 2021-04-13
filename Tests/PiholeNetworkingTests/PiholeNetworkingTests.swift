@@ -107,6 +107,26 @@ final class PiholeNetworkingTests: XCTestCase {
 			} receiveValue: { _ in }
 	}
 	
+	func testOtherErrorMapping() throws {
+		enum TestError: Error, Equatable {
+			case e
+		}
+		let _ = Fail(outputType: String.self, failure: TestError.e)
+			.mapPiholeNetworkingError()
+			.sink { completion in
+				switch completion {
+				case .finished: XCTFail("Expected failure")
+				case .failure(let error):
+					switch error {
+					case .other(let e):
+						XCTAssertEqual(e as? TestError, TestError.e)
+					default:
+						XCTFail("Expected a decoding error")
+					}
+				}
+			} receiveValue: { _ in }
+	}
+	
 	func testClientPipeInitializer() throws {
 		let fullClient = PHClient(pipedString: "localhost.UDM|192.168.1.158")
 		let partialClient = PHClient(pipedString: "192.168.2.210")
