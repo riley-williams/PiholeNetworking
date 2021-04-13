@@ -34,7 +34,9 @@ class PiholeIntegrationTests: XCTestCase {
 					promise.fulfill()
 				}
 			} receiveValue: { summary in
-				XCTAssertGreaterThan(summary.dnsQueryTodayCount, 0)
+				XCTAssertGreaterThan(summary.queryCount, 0)
+				let computedCount = Float(summary.blockedQueryCount)/Float(summary.queryCount)*100
+				XCTAssertEqual(computedCount, summary.percentAds, accuracy: 0.5)
 				promise.fulfill()
 			}.store(in: &cancellables)
 		wait(for: [promise], timeout: 1)

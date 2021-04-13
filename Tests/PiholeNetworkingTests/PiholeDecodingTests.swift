@@ -39,7 +39,8 @@ class PiholeDecodingTests: XCTestCase {
 					promise.fulfill()
 				}
 			} receiveValue: { summary in
-				XCTAssertEqual(summary.dnsQueryTodayCount, 6673)
+				XCTAssertEqual(summary.queryCount, 6673)
+				XCTAssertEqual(summary.gravityInfo.lastUpdate.timeIntervalSince1970, 1615696687, accuracy: 1.0)
 				promise.fulfill()
 			}.store(in: &cancellables)
 		wait(for: [promise], timeout: 1)
