@@ -93,6 +93,24 @@ class PiholeIntegrationTests: XCTestCase {
 			}.store(in: &cancellables)
 		wait(for: [promise], timeout: 1)
 	}
+	
+	final func testDecodeTopClients() throws {
+		let promise = XCTestExpectation()
+		provider.getTopClients(authenticatedInstance, max: 3)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { clients in
+				XCTAssertGreaterThan(clients.count, 0)
+				XCTAssertLessThanOrEqual(clients.count, 3)
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
 
 	final func testDecodeRequestRatioTimeline() throws {
 		let promise = XCTestExpectation()

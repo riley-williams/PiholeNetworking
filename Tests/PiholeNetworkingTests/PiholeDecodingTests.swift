@@ -68,7 +68,7 @@ class PiholeDecodingTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 	
-	final func testDecodeTopClients() throws {
+	final func testDecodeTopBlockedClients() throws {
 		let session = MockSession(result: MockJSON.topClientsBlocked)
 		let provider = PHProvider(session: session)
 		
@@ -84,6 +84,27 @@ class PiholeDecodingTests: XCTestCase {
 			} receiveValue: { clients in
 				XCTAssertEqual(clients.count, 6)
 				XCTAssertEqual(clients[PHClient(pipedString: "localhost.UDM|192.168.1.158")!], 97)
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
+	
+	final func testDecodeTopClients() throws {
+		let session = MockSession(result: MockJSON.getQuerySources)
+		let provider = PHProvider(session: session)
+		
+		let promise = XCTestExpectation()
+		provider.getTopClients(authenticatedInstance, max: 20)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { clients in
+				XCTAssertEqual(clients.count, 18)
+				XCTAssertEqual(clients[PHClient(pipedString: "localhost|127.0.0.1")!], 1940)
 				promise.fulfill()
 			}.store(in: &cancellables)
 		wait(for: [promise], timeout: 1)

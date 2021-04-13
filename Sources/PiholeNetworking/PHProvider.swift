@@ -154,6 +154,31 @@ public class PHProvider {
 			.eraseToAnyPublisher()
 	}
 	
+	/// Returns the top clients over the past 24 hours, along with the counts for each
+	///
+	/// Requires authentication
+	/// - Parameters:
+	///   - instance: The Pi-hole instance to connect to
+	///   - max: The maximum number of clients to request
+	public func getTopClients<T: PHInstance>(_ instance: T, max count: Int) -> AnyPublisher<[PHClient: Int], PHProviderError> {
+		guard let token = instance.apiKey,
+			  let url = URL(string: "http://\(instance.address)/admin/api.php?getQuerySources=\(count)&auth=\(token)")
+		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
+		return resultDecoderPublisher(url: url, type: [String:[String:Int]].self)
+			.tryMap { result in
+				guard let sourcesDict = result["top_sources"]
+				else { throw PHProviderError.decodingError(nil) }
+				var sources: [PHClient: Int] = [:]
+				sourcesDict.forEach { (key, value) in
+					guard let client = PHClient(pipedString: key)
+					else { return }
+					sources[client] = value
+				}
+				return sources
+			}.mapPiholeNetworkingError()
+			.eraseToAnyPublisher()
+	}
+	
 	/// Returns the passed/blocked data for the past 24 hours, split into 10 minute intervals
 	///
 	/// Does not require authentication
