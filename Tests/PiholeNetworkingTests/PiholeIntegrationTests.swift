@@ -170,4 +170,25 @@ class PiholeIntegrationTests: XCTestCase {
 		wait(for: [promise, promise2], timeout: 1)
 	}
 	
+	@available(OSX 11.0, *)
+	final func testDisablePi() throws {
+		let promise = XCTestExpectation()
+		provider.disable(authenticatedInstance, 1)
+			.flatMap { [unowned self] response -> AnyPublisher<PHSummary, PHProviderError> in
+				XCTAssertEqual(response, .disabled)
+				return self.provider.getSummary(authenticatedInstance)
+			}
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { summary in
+				XCTAssertEqual(summary.state, .disabled)
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
 }

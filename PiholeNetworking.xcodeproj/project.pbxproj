@@ -98,7 +98,7 @@
 		OBJ_41 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		"PiholeNetworking::PiholeNetworking::Product" /* PiholeNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PiholeNetworking.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		"PiholeNetworking::PiholeNetworkingTests::Product" /* PiholeNetworkingTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = PiholeNetworkingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		"PiholeNetworking::PiholeNetworkingTests::Product" /* PiholeNetworkingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = PiholeNetworkingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
