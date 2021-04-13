@@ -43,7 +43,7 @@ public class PHProvider {
 	///   - instance: The Pi-hole instance to connect to
 	public func verifyPassword<T: PHInstance>(_ instance: T) -> AnyPublisher<Bool, PHProviderError> {
 		guard let apiKey = instance.apiKey,
-			let url = URL(string: "http://\(instance.address)/admin/api.php?getQueryTypes&auth=\(apiKey)")
+			let url = URL(string: "http://\(instance.address)/admin/api.php?recentBlocked&auth=\(apiKey)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return session.simpleDataTaskPublisher(for: url)
 			.mapPiholeNetworkingError()
