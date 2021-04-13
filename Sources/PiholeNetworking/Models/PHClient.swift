@@ -12,7 +12,7 @@ public struct PHClient {
 	/// The IP address of this client
 	public var ip: String
 	/// The name associated with this client, typically postfixed with the search domain.
-	/// e.g. `Mabbook-Pro.DOMAIN`
+	/// e.g. `Macbook-Pro.DOMAIN`
 	public var name: String?
 }
 

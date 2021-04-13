@@ -33,13 +33,14 @@ public class PHProvider {
 		self.session = session
 	}
 	
-	/// Returns the summary for the past 24 hours
+	/// Verifies a password by attempting to access an endpoint that requires authentication
 	///
 	/// Does not require authentication
 	/// - Parameters:
 	///   - instance: The Pi-hole instance to connect to
 	public func verifyPassword<T: PHInstance>(_ instance: T) -> AnyPublisher<Bool, PHProviderError> {
-		guard let url = URL(string: "http://\(instance.address)/admin/api.php?getQueryTypes&auth=\(instance.apiKey ?? "")")
+		guard let apiKey = instance.apiKey,
+			let url = URL(string: "http://\(instance.address)/admin/api.php?getQueryTypes&auth=\(apiKey)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return session.simpleDataTaskPublisher(for: url)
 			.mapPiholeNetworkingError()
@@ -120,8 +121,8 @@ public class PHProvider {
 	/// Requires authentication
 	/// - Parameters:
 	///   - instance: The Pi-hole instance to connect to
-	///   - count: The number of queries to request. The number of queries returned may be less than that requested
-	public func getTopQueries<T: PHInstance>(_ instance: T, count: Int) -> AnyPublisher<PHTopQueries, PHProviderError> {
+	///   - max: The maximum number of queries to request
+	public func getTopQueries<T: PHInstance>(_ instance: T, max count: Int) -> AnyPublisher<PHTopQueries, PHProviderError> {
 		guard let token = instance.apiKey,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?topItems=\(count)&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }

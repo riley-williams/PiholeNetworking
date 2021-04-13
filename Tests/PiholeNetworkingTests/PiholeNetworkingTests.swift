@@ -29,7 +29,7 @@ final class PiholeNetworkingTests: XCTestCase {
 									   ConcreteInstance("192.168.2.10", port: 8080),
 									   ConcreteInstance("192.168.2.10", port: 8088)]
 		
-		let uniquePis: Set<ConcreteInstance> = Set(pis)
+		let uniquePis: Set<ConcreteInstance> = Set(pis.reversed())
 		
 		XCTAssertEqual(uniquePis.count, pis.count, "Pis are not properly identified")
 		
@@ -47,7 +47,7 @@ final class PiholeNetworkingTests: XCTestCase {
 								   PHClient(ip: "10.10.1.9"),
 								   PHClient(ip: "10.10.1.11"),
 								   PHClient(ip: "192.168.1.75")]
-		let uniqueClients: Set<PHClient> = Set(clients)
+		let uniqueClients: Set<PHClient> = Set(clients.reversed())
 		
 		XCTAssertEqual(clients.count, uniqueClients.count)
 		
