@@ -8,8 +8,8 @@
 import Foundation
 
 public struct PHClientRecord: Codable {
-	/// Time this record was recorded
-	public var timestamp: Int
+	/// Time this record represents, represented as seconds since 1970
+	public var timestamp: TimeInterval
 	/// Number of requests from a specific client
 	public var count: Int
 }

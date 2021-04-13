@@ -16,11 +16,10 @@ public struct PHSparseClientTimeline: Codable {
 		// Seed the dictionary keys
 		data.clients.forEach { records[$0] = [] }
 		data.timestamps.forEach { (key, counts) in
-			guard let timetamp = Int(key) else { return }
 			zip(data.clients, counts).lazy
 				.filter { $0.1 > 0 }
 				.forEach { (client, count) in
-					let record = PHClientRecord(timestamp: timetamp, count: count)
+					let record = PHClientRecord(timestamp: key, count: count)
 					records[client]?.append(record)
 				}
 		}
