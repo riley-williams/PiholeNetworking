@@ -9,13 +9,11 @@
 import Foundation
 
 public struct PHClient {
-	public var name: String
+	/// The IP address of this client
 	public var ip: String
-	
-	public init(name: String, ip: String) {
-		self.name = name
-		self.ip = ip
-	}
+	/// The name associated with this client, typically postfixed with the search domain.
+	/// e.g. `Macbook-Pro.DOMAIN`
+	public var name: String?
 }
 
 extension PHClient: Codable { }
@@ -28,11 +26,14 @@ extension PHClient: Hashable {
 
 extension PHClient: Comparable {
 	public static func < (lhs: PHClient, rhs: PHClient) -> Bool {
-		if lhs.name.isEmpty && !rhs.name.isEmpty {
+		let lhsName = lhs.name ?? ""
+		let rhsName = rhs.name ?? ""
+		switch (lhsName.isEmpty, rhsName.isEmpty) {
+		case (true, false):
 			return false
-		} else if !lhs.name.isEmpty && rhs.name.isEmpty {
+		case (false, true):
 			return true
-		} else if lhs.name.isEmpty && rhs.name.isEmpty {
+		case (true, true):
 			let lhsComponents = lhs.ip
 				.components(separatedBy: ".")
 				.map { String($0.reversed()) }
@@ -46,12 +47,30 @@ extension PHClient: Comparable {
 				.map { String($0.reversed()) }
 				.reduce("", +)
 			return lhsComponents < rhsComponents
-		} else {
-			return lhs.name < rhs.name
+		default:
+			return lhsName < rhsName
 		}
 	}
 	
 	public static func == (lhs: PHClient, rhs: PHClient) -> Bool {
 		lhs.ip == rhs.ip
+	}
+}
+
+internal extension PHClient {
+	init?(pipedString: String) {
+		let components = pipedString.split(separator: "|")
+		switch components.count {
+		case 1:
+			self.ip = pipedString
+		case 2:
+			guard let name = components.first,
+				  let ip = components.last
+			else { return nil }
+			self.name = String(name)
+			self.ip = String(ip)
+		default:
+			return nil
+		}
 	}
 }

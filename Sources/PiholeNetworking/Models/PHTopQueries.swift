@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  PHTopQueries.swift
 //  
 //
 //  Created by Riley Williams on 3/13/21.
@@ -10,11 +10,6 @@ import Foundation
 public struct PHTopQueries: Codable {
 	public var topPassed: [String: Int]
 	public var topBlocked: [String: Int]
-	
-	public init(topPassed: [String: Int], topBlocked: [String: Int]) {
-		self.topPassed = topPassed
-		self.topBlocked = topBlocked
-	}
 	
 	enum CodingKeys: String, CodingKey {
 		case topPassed = "top_queries"

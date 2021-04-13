@@ -1,5 +1,5 @@
 //
-//  PiholeType+Extensions.swift
+//  PHInstance+Comparable.swift
 //
 //  Created by Riley Williams on 4/3/21.
 //  Copyright © 2021 Riley Williams. All rights reserved.

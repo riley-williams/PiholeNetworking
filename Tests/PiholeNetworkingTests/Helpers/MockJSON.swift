@@ -17,6 +17,8 @@ extension MockJSON {
 	static let topItems =
 		#"{"top_queries":{"cdn.samsungcloudsolution.com":1618,"diagnostics.meethue.com":209,"lb._dns-sd._udp.202.2.123.100.in-addr.arpa":185,"dcp.dc1.philips.com":106,"logsink.devices.nest.com":89,"pool.ntp.org":72,"253.2.168.192.in-addr.arpa":46,"28.2.168.192.in-addr.arpa":46,"231.1.168.192.in-addr.arpa":46,"95.1.168.192.in-addr.arpa":46},"top_ads":{"g.msn.com":377,"lcprd1.samsungcloudsolution.net":20,"osb-ussvc.samsungqbe.com":20,"p.typekit.net-v3.edgekey.net":14,"gpm.samsungqbe.com":6,"ads.samsungads.com":6,"iadsdk.apple.com":6,"oempprd.samsungcloudsolution.com":5,"ypu.samsungelectronics.com":2,"app-measurement.com":2}}"#
 	
+	static let topClientsBlocked = #"{"top_sources_blocked":{"localhost.UDM|192.168.1.158":97,"localhost.UDM|192.168.1.157":9,"192.168.2.245":8,"iPhone.UDM|192.168.1.9":3,"192.168.2.210":2,"192.168.2.229":1}}"#
+	
 	static let getQuerySources =
 		#"{"top_sources":{"localhost|127.0.0.1":1940,"192.168.1.11":1888,"localhost.udm|192.168.1.157":1872,"philips-hue.udm|192.168.1.239":323,"ians-iphone.udm|192.168.1.138":196,"192.168.6.1":170,"09aa01af25190k44.udm|192.168.1.137":132,"iphone.udm|192.168.1.9":30,"192.168.103.122":27,"192.168.103.121":26,"192.168.103.129":24,"192.168.1.111":8,"192.168.2.245":7,"flexhd.udm|192.168.1.82":6,"macbook-pro.udm|192.168.1.41":2,"ians-air.udm|192.168.1.61":2,"rmb12.udm|192.168.1.140":2,"unifi.udm|192.168.1.1":1}}"#
 	
