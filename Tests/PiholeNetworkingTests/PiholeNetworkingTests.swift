@@ -147,6 +147,27 @@ final class PiholeNetworkingTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 	
+	final func testGetClientTimeline() throws {
+		let session = MockSession(result: MockJSON.overTimeDataClients)
+		let provider = PHProvider(session: session)
+		
+		let promise = XCTestExpectation()
+		provider.getClientTimeline(authenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { clientTimeline in
+				XCTAssertGreaterThan(clientTimeline.clients.count, 0)
+				XCTAssertEqual(clientTimeline.clients.count, clientTimeline.timestamps.first!.value.count)
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
+	
 	func testInstanceSorting() throws {
 		// This is sorted in the desired order
 		let pis: [ConcreteInstance] = [ConcreteInstance("4.8.9.255"),
