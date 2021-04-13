@@ -55,4 +55,55 @@ final class PiholeNetworkingTests: XCTestCase {
 		XCTAssertTrue(uniqueClients.contains(PHClient(ip: "192.168.1.100", name: "name shouldnt matter")))
 	}
 
+	func testURLErrorMapping() throws {
+		let _ = Fail(outputType: String.self, failure: URLError(.networkConnectionLost))
+			.mapPiholeNetworkingError()
+			.sink { completion in
+				switch completion {
+				case .finished: XCTFail("Expected failure")
+				case .failure(let error):
+					switch error {
+					case .urlError(let e):
+						XCTAssertEqual(e, URLError(.networkConnectionLost))
+					default:
+						XCTFail("Expected a URLError")
+					}
+				}
+			} receiveValue: { _ in }
+	}
+	
+	func testPassthroughErrorMapping() throws {
+		let _ = Fail(outputType: String.self, failure: PHProviderError.invalidHostname)
+			.mapPiholeNetworkingError()
+			.sink { completion in
+				switch completion {
+				case .finished: XCTFail("Expected failure")
+				case .failure(let error):
+					switch error {
+					case .invalidHostname:
+						break
+					default:
+						XCTFail("Expected an invalidHostname error")
+					}
+				}
+			} receiveValue: { _ in }
+	}
+	
+	func testDecodingErrorMapping() throws {
+		let _ = Just("".data(using: .utf8)!)
+			.decode(type: PHState.self, decoder: JSONDecoder())
+			.mapPiholeNetworkingError()
+			.sink { completion in
+				switch completion {
+				case .finished: XCTFail("Expected failure")
+				case .failure(let error):
+					switch error {
+					case .decodingError(_):
+						break
+					default:
+						XCTFail("Expected a decoding error")
+					}
+				}
+			} receiveValue: { _ in }
+	}
 }
