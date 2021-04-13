@@ -8,9 +8,9 @@
 import Foundation
 
 public struct PHRequestRatioTimeline: Codable {
-	/// Counts of blocked domain requests
+	/// Counts of blocked domain requests, keyed by domain name
 	public var ads: [String: Int]
-	/// Counts of passed domain requests
+	/// Counts of passed domain requests, keyed by domain name
 	public var domains: [String: Int]
 	
 	enum CodingKeys: String, CodingKey {

@@ -52,7 +52,7 @@ public class PHProvider {
 			.eraseToAnyPublisher()
 	}
 	
-	/// Returns the summary for the past 24 hours
+	/// Returns the summary for today
 	///
 	/// Does not require authentication
 	/// - Parameters:
@@ -119,7 +119,7 @@ public class PHProvider {
 			.eraseToAnyPublisher()
 	}
 	
-	/// Returns the top passed and blocked queries over the past 24 hours, along with the counts for each
+	/// Returns the top passed and blocked queries today, along with the counts for each
 	///
 	/// Requires authentication
 	/// - Parameters:
@@ -132,7 +132,7 @@ public class PHProvider {
 		return resultDecoderPublisher(url: url, type: PHTopQueries.self)
 	}
 	
-	/// Returns the top blocked clients over the past 24 hours, along with the counts for each
+	/// Returns the top blocked clients today, along with the counts for each
 	///
 	/// Requires authentication
 	/// - Parameters:
@@ -157,7 +157,7 @@ public class PHProvider {
 			.eraseToAnyPublisher()
 	}
 	
-	/// Returns the top clients over the past 24 hours, along with the counts for each
+	/// Returns the top clients today, along with the counts for each
 	///
 	/// Requires authentication
 	/// - Parameters:
@@ -182,7 +182,7 @@ public class PHProvider {
 			.eraseToAnyPublisher()
 	}
 	
-	/// Returns the breakdown of query types over the past 24 hours, with the respective percentages adding up to 100
+	/// Returns the breakdown of query types today, with the respective percentages adding up to (approximately) 100
 	///
 	/// Requires authentication
 	/// - Parameters:
@@ -200,7 +200,7 @@ public class PHProvider {
 			.eraseToAnyPublisher()
 	}
 	
-	/// Returns the passed/blocked data for the past 24 hours, split into 10 minute intervals
+	/// Returns the passed/blocked data for today, split into 10 minute intervals
 	///
 	/// Does not require authentication
 	/// - Parameter instance: The Pi-hole instance to connect to
@@ -210,7 +210,7 @@ public class PHProvider {
 		return resultDecoderPublisher(url: url, type: PHRequestRatioTimeline.self)
 	}
 	
-	/// Returns the request count, by client, for the past 24 hours
+	/// Returns the request count, by client, for today
 	///
 	/// Requires authentication for full client data
 	/// - Parameter instance: The Pi-hole instance to connect to
@@ -221,7 +221,7 @@ public class PHProvider {
 		return resultDecoderPublisher(url: url, type: PHClientTimeline.self)
 	}
 	
-	/// Returns the breakdown of forward destinations over the past 24 hours
+	/// Returns the breakdown of forward destinations for today
 	///
 	/// Requires authentication
 	/// - Parameter instance: The Pi-hole instance to connect to

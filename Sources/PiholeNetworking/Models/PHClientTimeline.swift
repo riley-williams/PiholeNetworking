@@ -10,7 +10,7 @@ import Foundation
 public struct PHClientTimeline: Codable {
 	/// List of clients active in the period represented
 	public var clients: [PHClient]
-	/// Timestamps, represented as the number of seconds since 1970 and an array of counts corresponding to the `clients` property
+	/// The array of counts corresponding to the `clients` property, keyed by timestamp
 	public var timestamps: [TimeInterval:[Int]]
 	
 	enum CodingKeys: String, CodingKey {

@@ -19,9 +19,9 @@ public struct PHSummary: Codable {
 	public var blockedQueryCount:Int
 	/// The number of unique domains resolved today
 	public var uniqueDomainCount:Int
-	
+	/// The number of queries forwarded to an upstream resolver today
 	public var forwardedQueryCount:Int
-	
+	/// The number of queries that were resolved by the cache today
 	public var cachedQueryCount:Int
 	/// The  number of unique clients ever seen
 	public var allTimeClientCount:Int
