@@ -164,6 +164,27 @@ class PiholeDecodingTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 	
+	final func testGetQueryTypes() throws {
+		let session = MockSession(result: MockJSON.getQueryTypes)
+		let provider = PHProvider(session: session)
+		
+		let promise = XCTestExpectation()
+		provider.getQueryTypes(authenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { types in
+				XCTAssertEqual(types.count, 13)
+				XCTAssertEqual(types["A (IPv4)"]!, 35.5, accuracy: 0.1)
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
+	
 	final func testGetHWInfo() throws {
 		let session = MockSession(result: MockJSON.index)
 		let provider = PHProvider(session: session)

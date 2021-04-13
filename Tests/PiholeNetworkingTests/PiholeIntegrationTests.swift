@@ -167,6 +167,23 @@ class PiholeIntegrationTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 	
+	final func testGetQueryTypes() throws {
+		let promise = XCTestExpectation()
+		provider.getQueryTypes(authenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { types in
+				XCTAssertEqual(types.values.reduce(0,+), 100, accuracy: 1)
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
+	
 	final func testGetHWInfo() throws {
 		let promise = XCTestExpectation()
 		provider.getHWInfo(unauthenticatedInstance)

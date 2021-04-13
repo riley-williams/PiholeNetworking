@@ -179,6 +179,24 @@ public class PHProvider {
 			.eraseToAnyPublisher()
 	}
 	
+	/// Returns the breakdown of query types over the past 24 hours, with the respective percentages adding up to 100
+	///
+	/// Requires authentication
+	/// - Parameters:
+	///   - instance: The Pi-hole instance to connect to
+	public func getQueryTypes<T: PHInstance>(_ instance: T) -> AnyPublisher<[String: Float], PHProviderError> {
+		guard let token = instance.apiKey,
+			  let url = URL(string: "http://\(instance.address)/admin/api.php?getQueryTypes&auth=\(token)")
+		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
+		return resultDecoderPublisher(url: url, type: [String:[String:Float]].self)
+			.tryMap { result in
+				guard let types = result["querytypes"]
+				else { throw PHProviderError.decodingError(nil) }
+				return types
+			}.mapPiholeNetworkingError()
+			.eraseToAnyPublisher()
+	}
+	
 	/// Returns the passed/blocked data for the past 24 hours, split into 10 minute intervals
 	///
 	/// Does not require authentication
