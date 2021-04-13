@@ -3,7 +3,6 @@ import Combine
 @testable import PiholeNetworking
 
 final class PiholeNetworkingTests: XCTestCase {
-	let instance = ConcreteInstance("256.0.0.0")
 	var cancellables: Set<AnyCancellable> = []
 	let decoder = JSONDecoder()
 	let unauthenticatedInstance = ConcreteInstance("1.2.3.4")
@@ -13,13 +12,12 @@ final class PiholeNetworkingTests: XCTestCase {
 		
 	}
 	
-	final func testHashPassword() throws {
+	final func testAPIKeyGeneration() throws {
 		let instance = ConcreteInstance("1.2.3.4", port: 80, password: "8MzrcBRm")
-		
 		XCTAssertEqual(instance.apiKey, "af90e024ac7f515011ae0c9b326a7e9ff7a00fa9d7f770d323c848f12659e3b9")
 	}
 	
-	final func testHashNilPassword() throws {
+	final func testAPIKeyFromNilPassword() throws {
 		let instance = ConcreteInstance("1.2.3.4")
 		XCTAssertNil(instance.apiKey)
 	}
@@ -50,9 +48,26 @@ final class PiholeNetworkingTests: XCTestCase {
 	}
 	
 	final func testDecodeTopQueries() throws {
+		let session = MockSession(result: MockJSON.topItems)
+		let provider = PHProvider(session: session)
 		
-		let data = MockJSON.topItems.data(using: .utf8)!
-		_ = try decoder.decode(PHTopQueries.self, from: data)
+		let promise = XCTestExpectation()
+		provider.getTopQueries(authenticatedInstance, count: 10)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { topQueries in
+				XCTAssertEqual(topQueries.topPassed.count, 10)
+				XCTAssertEqual(topQueries.topBlocked.count, 10)
+				XCTAssertEqual(topQueries.topPassed["diagnostics.meethue.com"], 209)
+				XCTAssertEqual(topQueries.topBlocked["osb-ussvc.samsungqbe.com"], 20)
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
 	}
 	final func testDecode10MinData() throws {
 		let session = MockSession(result: MockJSON.overTimeData10Mins)
@@ -141,10 +156,8 @@ final class PiholeNetworkingTests: XCTestCase {
 		XCTAssertTrue(uniqueClients.contains(PHClient(ip: "192.168.1.100", name: "name shouldnt matter")))
 	}
 	
-	
-	
 	//TODO: Why Apple :/
 	static var allTests = [
-		("testHashPassword", testHashPassword),
+		("testAPIKeyGeneration", testAPIKeyGeneration),
 	]
 }

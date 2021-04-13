@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum PHForwardDestination: Decodable {
+public enum PHForwardDestination: RawRepresentable {
 	/// Destination reported for requests that hit the cache
 	case cache
 	/// Destination reported for requests that hit the blocklist
@@ -15,13 +15,11 @@ public enum PHForwardDestination: Decodable {
 	/// Remote forward destination
 	case remote(name: String, ip: String)
 	
-	public init(from decoder: Decoder) throws {
-		let container = try decoder.singleValueContainer()
-		let rawValue = try container.decode(String.self)
+	public init?(rawValue: String) {
 		let components = rawValue.split(separator: "|")
 		guard let nameComponent = components.first,
 			  let ipComponent = components.last
-		else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Expected to find a single pipe | separator")) }
+		else { return nil }
 		
 		switch (nameComponent, ipComponent) {
 		case ("cache", "cache"):
@@ -29,19 +27,21 @@ public enum PHForwardDestination: Decodable {
 		case ("blocklist", "blocklist"):
 			self = .blocklist
 		default:
-			self = .remote(name: nameComponent.stripPort(), ip: ipComponent.stripPort())
+			self = .remote(name: String(nameComponent), ip: String(ipComponent))
 		}
 	}
-}
-
-fileprivate extension StringProtocol {
-	/// Given a string of the format: `abc#53` this strips the #53
-	func stripPort() -> String {
-		guard let strippedString = self.split(separator: "#").first
-		else { return String(self) }
-		return String(strippedString)
+	
+	public var rawValue: String {
+		switch self {
+		case .cache:
+			return "cache|cache"
+		case .blocklist:
+			return "blocklist|blocklist"
+		case .remote(name: let name, ip: let ip):
+			return "\(name)|\(ip)"
+		}
 	}
-}
+}1
 
 extension PHForwardDestination: Hashable {
 	public func hash(into hasher: inout Hasher) {

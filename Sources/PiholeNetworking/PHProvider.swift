@@ -120,7 +120,7 @@ public class PHProvider {
 	/// Requires authentication
 	/// - Parameters:
 	///   - instance: The Pi-hole instance to connect to
-	///   - count: The number of queries to request. This may be greater than the number of queries returned
+	///   - count: The number of queries to request. The number of queries returned may be less than that requested
 	public func getTopQueries<T: PHInstance>(_ instance: T, count: Int) -> AnyPublisher<PHTopQueries, PHProviderError> {
 		guard let token = instance.apiKey,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?topItems=\(count)&auth=\(token)")
@@ -159,15 +159,20 @@ public class PHProvider {
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
 		return session.simpleDataTaskPublisher(for: url)
-			.decode(type: [String: [PHForwardDestination: Float]].self, decoder: JSONDecoder())
+			.decode(type: [String: [String: Float]].self, decoder: JSONDecoder())
 			.tryMap {
 				guard let forwardDestinations = $0["forward_destinations"]
 				else { throw PHProviderError.decodingError }
-				return forwardDestinations
+				var result: [PHForwardDestination: Float] = [:]
+				forwardDestinations
+					.compactMap {
+						guard let destination = PHForwardDestination(rawValue: $0) else { return nil }
+						return (destination, $1)
+					}.forEach { result[$0] = $1 }
+				return result
 			}.mapPiholeNetworkingError()
 			.eraseToAnyPublisher()
 	}
-	
 	
 	/// Enables a Pi-hole
 	///
