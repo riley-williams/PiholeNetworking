@@ -15,7 +15,7 @@ final class PiholeNetworkingTests: XCTestCase {
 	
 	final func testAPIKeyFromNilPassword() throws {
 		let instance = ConcreteInstance("1.2.3.4")
-		XCTAssertNil(instance.apiKey)
+		XCTAssertNotNil(instance.apiKey)
 	}
 	
 	func testInstanceSorting() throws {

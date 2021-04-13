@@ -7,7 +7,7 @@
 
 import XCTest
 import Combine
-@testable import PiholeNetworking
+import PiholeNetworking
 
 class PiholeIntegrationTests: XCTestCase {
 	var cancellables: Set<AnyCancellable> = []
@@ -58,6 +58,24 @@ class PiholeIntegrationTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 	
+	final func testDecodeTopQueriesUnauthenticated() throws {
+		let promise = XCTestExpectation()
+		provider.getTopQueries(unauthenticatedInstance, count: 6)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTAssertEqual(error, PHProviderError.authenticationRequired)
+					promise.fulfill()
+				}
+			} receiveValue: { _ in
+				XCTFail("Expected to not receive a valid response")
+				promise.fulfill()
+			}
+			.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
+	
 	final func testDecodeRequestRatioTimeline() throws {
 		let promise = XCTestExpectation()
 		provider.getRequestRatioTimeline(unauthenticatedInstance)
@@ -92,6 +110,24 @@ class PiholeIntegrationTests: XCTestCase {
 				XCTAssertEqual(total, 100, accuracy: 1)
 				promise.fulfill()
 			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
+	
+	final func testGetForwardingDestinationsUnauthenticated() throws {
+		let promise = XCTestExpectation()
+		provider.getForwardDestinations(unauthenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTAssertEqual(error, PHProviderError.authenticationRequired)
+					promise.fulfill()
+				}
+			} receiveValue: { _ in
+				XCTFail("Expected to not receive a valid response")
+				promise.fulfill()
+			}
+			.store(in: &cancellables)
 		wait(for: [promise], timeout: 1)
 	}
 	
@@ -136,6 +172,24 @@ class PiholeIntegrationTests: XCTestCase {
 				}
 				promise.fulfill()
 			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
+	
+	final func testGetClientTimelineUnauthenticated() throws {
+		let promise = XCTestExpectation()
+		provider.getClientTimeline(unauthenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTAssertEqual(error, PHProviderError.authenticationRequired)
+					promise.fulfill()
+				}
+			} receiveValue: { _ in
+				XCTFail("Expected to not receive a valid response")
+				promise.fulfill()
+			}
+			.store(in: &cancellables)
 		wait(for: [promise], timeout: 1)
 	}
 
@@ -193,5 +247,39 @@ class PiholeIntegrationTests: XCTestCase {
 				promise.fulfill()
 			}.store(in: &cancellables)
 		wait(for: [promise], timeout: 5)
+	}
+	
+	final func testDisableUnauthenticated() throws {
+		let promise = XCTestExpectation()
+		provider.disable(unauthenticatedInstance, 1)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTAssertEqual(error, .authenticationRequired)
+					promise.fulfill()
+				}
+			} receiveValue: { _ in
+				XCTFail("Expected not to receive any values")
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
+	
+	final func testEnableUnauthenticated() throws {
+		let promise = XCTestExpectation()
+		provider.enable(unauthenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTAssertEqual(error, .authenticationRequired)
+					promise.fulfill()
+				}
+			} receiveValue: { _ in
+				XCTFail("Expected not to receive any values")
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
 	}
 }

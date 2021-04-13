@@ -158,8 +158,7 @@ public class PHProvider {
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?getForwardDestinations&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
-		return session.simpleDataTaskPublisher(for: url)
-			.decode(type: [String: [String: Float]].self, decoder: JSONDecoder())
+		return resultDecoderPublisher(url: url, type: [String: [String: Float]].self)
 			.tryMap {
 				guard let forwardDestinations = $0["forward_destinations"]
 				else { throw PHProviderError.decodingError(nil) }
@@ -184,8 +183,7 @@ public class PHProvider {
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?enable&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
-		return session.simpleDataTaskPublisher(for: url)
-			.decode(type: [String:PHState].self, decoder: JSONDecoder())
+		return resultDecoderPublisher(url: url, type: [String:PHState].self)
 			.tryMap {
 				guard let state = $0["status"] else { throw PHProviderError.decodingError(nil) }
 				return state
@@ -213,8 +211,7 @@ public class PHProvider {
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?\(arg)&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
-		return session.simpleDataTaskPublisher(for: url)
-			.decode(type: [String:PHState].self, decoder: JSONDecoder())
+		return resultDecoderPublisher(url: url, type: [String:PHState].self)
 			.tryMap {
 				guard let state = $0["status"] else { throw PHProviderError.decodingError(nil) }
 				return state
@@ -223,9 +220,17 @@ public class PHProvider {
 			.eraseToAnyPublisher()
 	}
 	
+	/// Provides convenient handling of errors due to networking, decoding, and authentication
 	private func resultDecoderPublisher<T: Decodable>(url: URL, type:T.Type) -> AnyPublisher<T, PHProviderError> {
 		session.simpleDataTaskPublisher(for: url)
-			.decode(type: T.self, decoder: JSONDecoder())
+			.tryMap { result in
+				// Pihole returns "[]" when authentication is required
+				if let obj = try? JSONDecoder().decode([Int].self, from: result),
+				   obj.isEmpty {
+					throw PHProviderError.authenticationRequired
+				}
+				return try JSONDecoder().decode(T.self, from: result)
+			}
 			.mapPiholeNetworkingError()
 			.eraseToAnyPublisher()
 	}

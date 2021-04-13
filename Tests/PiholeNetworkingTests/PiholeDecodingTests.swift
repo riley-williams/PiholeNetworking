@@ -167,4 +167,23 @@ class PiholeDecodingTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 
+	final func testUnauthenticatedResponse() throws {
+		let session = MockSession(result: "[]")
+		let provider = PHProvider(session: session)
+		
+		let promise = XCTestExpectation()
+		provider.getClientTimeline(authenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTAssertEqual(error, .authenticationRequired)
+					promise.fulfill()
+				}
+			} receiveValue: { clientTimeline in
+				XCTFail("Did not expect to receive a value")
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
 }
