@@ -56,3 +56,21 @@ extension PHClient: Comparable {
 		lhs.ip == rhs.ip
 	}
 }
+
+internal extension PHClient {
+	init?(pipedString: String) {
+		let components = pipedString.split(separator: "|")
+		switch components.count {
+		case 1:
+			self.ip = pipedString
+		case 2:
+			guard let name = components.first,
+				  let ip = components.last
+			else { return nil }
+			self.name = String(name)
+			self.ip = String(ip)
+		default:
+			return nil
+		}
+	}
+}

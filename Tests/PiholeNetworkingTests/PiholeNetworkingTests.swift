@@ -106,4 +106,16 @@ final class PiholeNetworkingTests: XCTestCase {
 				}
 			} receiveValue: { _ in }
 	}
+	
+	func testClientPipeInitializer() throws {
+		let fullClient = PHClient(pipedString: "localhost.UDM|192.168.1.158")
+		let partialClient = PHClient(pipedString: "192.168.2.210")
+		let nilClient = PHClient(pipedString: "abc|123|xyz")
+		
+		XCTAssertEqual(fullClient?.ip, "192.168.1.158")
+		XCTAssertEqual(fullClient?.name, "localhost.UDM")
+		XCTAssertEqual(partialClient?.ip, "192.168.2.210")
+		XCTAssertNil(partialClient?.name)
+		XCTAssertNil(nilClient)
+	}
 }
