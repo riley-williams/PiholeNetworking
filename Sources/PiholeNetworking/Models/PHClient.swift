@@ -14,11 +14,6 @@ public struct PHClient {
 	/// The name associated with this client, typically postfixed with the search domain.
 	/// e.g. `Mabbook-Pro.DOMAIN`
 	public var name: String?
-	
-	public init(ip: String, name: String? = nil) {
-		self.ip = ip
-		self.name = name
-	}
 }
 
 extension PHClient: Codable { }

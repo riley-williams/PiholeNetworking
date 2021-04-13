@@ -17,9 +17,4 @@ public struct PHRequestRatioTimeline: Codable {
 		case ads = "ads_over_time"
 		case domains = "domains_over_time"
 	}
-	
-	public init(ads: [String : Int], domains: [String : Int]) {
-		self.ads = ads
-		self.domains = domains
-	}
 }

@@ -12,10 +12,5 @@ public struct PHClientRecord: Codable {
 	public var timestamp: Int
 	/// Number of requests from a specific client
 	public var count: Int
-	
-	public init(timestamp: Int, count: Int) {
-		self.timestamp = timestamp
-		self.count = count
-	}
 }
 
