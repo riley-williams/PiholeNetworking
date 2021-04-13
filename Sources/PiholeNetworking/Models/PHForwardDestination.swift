@@ -41,7 +41,7 @@ public enum PHForwardDestination: RawRepresentable {
 			return "\(name)|\(ip)"
 		}
 	}
-}1
+}
 
 extension PHForwardDestination: Hashable {
 	public func hash(into hasher: inout Hasher) {

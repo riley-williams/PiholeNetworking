@@ -113,7 +113,35 @@ final class PiholeNetworkingTests: XCTestCase {
 					promise.fulfill()
 				}
 			} receiveValue: { destinations in
-				print(destinations)
+				XCTAssertEqual(destinations.count, 5)
+				XCTAssertTrue(destinations.contains { $0.key == .cache })
+				XCTAssertTrue(destinations.contains { $0.key == .blocklist })
+				XCTAssertTrue(destinations.contains { $0.key == .remote(name: "unifi.udm", ip: "192.168.1.1") })
+				XCTAssertFalse(destinations.contains { $0.key == .remote(name: "bad.udm", ip: "0.0.0.0") })
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
+	
+	final func testGetHWInfo() throws {
+		let session = MockSession(result: MockJSON.index)
+		let provider = PHProvider(session: session)
+		
+		let promise = XCTestExpectation()
+		provider.getHWInfo(authenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { info in
+				XCTAssertEqual(info.cpuTemp!, 39.16, accuracy: 0.05)
+				XCTAssertEqual(info.load1Min!, 0.03, accuracy: 0.005)
+				XCTAssertEqual(info.load5Min!, 0.07, accuracy: 0.005)
+				XCTAssertEqual(info.load15Min!, 0.08, accuracy: 0.005)
+				XCTAssertEqual(info.memoryUsage!, 38, accuracy: 0.1)
 				promise.fulfill()
 			}.store(in: &cancellables)
 		wait(for: [promise], timeout: 1)
@@ -155,9 +183,5 @@ final class PiholeNetworkingTests: XCTestCase {
 		XCTAssertEqual(uniqueClients.sorted(), clients, "Clients are not correctly sorted")
 		XCTAssertTrue(uniqueClients.contains(PHClient(ip: "192.168.1.100", name: "name shouldnt matter")))
 	}
-	
-	//TODO: Why Apple :/
-	static var allTests = [
-		("testAPIKeyGeneration", testAPIKeyGeneration),
-	]
+
 }
