@@ -28,11 +28,12 @@ extension PHClient: Comparable {
 	public static func < (lhs: PHClient, rhs: PHClient) -> Bool {
 		let lhsName = lhs.name ?? ""
 		let rhsName = rhs.name ?? ""
-		if lhsName.isEmpty && !rhsName.isEmpty {
+		switch (lhsName.isEmpty, rhsName.isEmpty) {
+		case (true, false):
 			return false
-		} else if !lhsName.isEmpty && rhsName.isEmpty {
+		case (false, true):
 			return true
-		} else if lhsName.isEmpty && rhsName.isEmpty {
+		case (true, true):
 			let lhsComponents = lhs.ip
 				.components(separatedBy: ".")
 				.map { String($0.reversed()) }
@@ -46,7 +47,7 @@ extension PHClient: Comparable {
 				.map { String($0.reversed()) }
 				.reduce("", +)
 			return lhsComponents < rhsComponents
-		} else {
+		default:
 			return lhsName < rhsName
 		}
 	}
