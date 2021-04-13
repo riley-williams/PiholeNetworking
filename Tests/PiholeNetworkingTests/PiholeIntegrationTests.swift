@@ -171,11 +171,14 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	@available(OSX 11.0, *)
-	final func testDisablePi() throws {
+	final func testDisableEnableCycle() throws {
 		let promise = XCTestExpectation()
-		provider.disable(authenticatedInstance, 1)
-			.flatMap { [unowned self] response -> AnyPublisher<PHSummary, PHProviderError> in
+		provider.disable(authenticatedInstance, 5)
+			.flatMap { [unowned self] response -> AnyPublisher<PHState, PHProviderError> in
 				XCTAssertEqual(response, .disabled)
+				return self.provider.enable(authenticatedInstance)
+			}.flatMap { [unowned self] response -> AnyPublisher<PHSummary, PHProviderError> in
+				XCTAssertEqual(response, .enabled)
 				return self.provider.getSummary(authenticatedInstance)
 			}
 			.sink { completion in
@@ -186,9 +189,9 @@ class PiholeIntegrationTests: XCTestCase {
 					promise.fulfill()
 				}
 			} receiveValue: { summary in
-				XCTAssertEqual(summary.state, .disabled)
+				XCTAssertEqual(summary.state, .enabled)
 				promise.fulfill()
 			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		wait(for: [promise], timeout: 5)
 	}
 }

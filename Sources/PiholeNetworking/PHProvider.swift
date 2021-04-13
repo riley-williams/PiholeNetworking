@@ -78,7 +78,7 @@ public class PHProvider {
 					  let tempLegacyRegex = try? NSRegularExpression(pattern: "Temp:&nbsp;([\\d.]+)&nbsp;&deg;([F|C])", options: .caseInsensitive),
 					  let loadRegex = try? NSRegularExpression(pattern: #"Load:(?:&nbsp;)+([\d.]+)(?:&nbsp;)+([\d.]+)(?:&nbsp;)+([\d.]+)"#, options: .caseInsensitive),
 					  let memoryRegex = try? NSRegularExpression(pattern: #"Memory usage:(?:&nbsp;)+([\d.]+)&thinsp;%"#, options: .caseInsensitive)
-				else { throw PHProviderError.decodingError }
+				else { throw PHProviderError.decodingError(nil) }
 				
 				var cpuTemp: Float? = nil
 				var load1Min: Float? = nil
@@ -162,7 +162,7 @@ public class PHProvider {
 			.decode(type: [String: [String: Float]].self, decoder: JSONDecoder())
 			.tryMap {
 				guard let forwardDestinations = $0["forward_destinations"]
-				else { throw PHProviderError.decodingError }
+				else { throw PHProviderError.decodingError(nil) }
 				var result: [PHForwardDestination: Float] = [:]
 				forwardDestinations
 					.compactMap {
@@ -184,8 +184,13 @@ public class PHProvider {
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?enable&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
-		return resultDecoderPublisher(url: url, type: PHStatusResponse.self)
-			.map { $0.state }
+		return session.simpleDataTaskPublisher(for: url)
+			.decode(type: [String:PHState].self, decoder: JSONDecoder())
+			.tryMap {
+				guard let state = $0["status"] else { throw PHProviderError.decodingError(nil) }
+				return state
+			}
+			.mapPiholeNetworkingError()
 			.eraseToAnyPublisher()
 	}
 	
@@ -208,8 +213,13 @@ public class PHProvider {
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?\(arg)&auth=\(token)")
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		
-		return resultDecoderPublisher(url: url, type: PHStatusResponse.self)
-			.map { $0.state }
+		return session.simpleDataTaskPublisher(for: url)
+			.decode(type: [String:PHState].self, decoder: JSONDecoder())
+			.tryMap {
+				guard let state = $0["status"] else { throw PHProviderError.decodingError(nil) }
+				return state
+			}
+			.mapPiholeNetworkingError()
 			.eraseToAnyPublisher()
 	}
 	

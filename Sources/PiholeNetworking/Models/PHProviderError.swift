@@ -11,7 +11,7 @@ public enum PHProviderError: Error {
 	case authenticationRequired
 	/// A URL could not be constructed using the hostname provided
 	case invalidHostname
-	case decodingError
-	case urlError(error: URLError)
-	case other(error: Error)
+	case decodingError(DecodingError?)
+	case urlError(URLError)
+	case other(Error)
 }

@@ -13,13 +13,13 @@ internal extension Publisher {
 		mapError {
 			switch $0 {
 			case let error as URLError:
-				return .urlError(error: error)
+				return .urlError(error)
 			case let error as PHProviderError:
 				return error
-			case is DecodingError:
-				return .decodingError
+			case let error as DecodingError:
+				return .decodingError(error)
 			default:
-				return .other(error: $0)
+				return .other($0)
 			}
 		}
 	}
