@@ -23,7 +23,7 @@ public struct PHSummary: Codable {
 	public var forwardedQueryCount:Int
 	/// The number of queries that were resolved by the cache today
 	public var cachedQueryCount:Int
-	/// The  number of unique clients ever seen
+	/// The all-time number of unique clients seen
 	public var allTimeClientCount:Int
 	/// The number of unique clients seen today
 	public var uniqueClientCount:Int
