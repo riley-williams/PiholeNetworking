@@ -17,7 +17,7 @@
             "en"
          );
          mainGroup = "OBJ_5";
-         productRefGroup = "OBJ_36";
+         productRefGroup = "OBJ_39";
          projectDirPath = ".";
          targets = (
             "PiholeNetworking::PiholeNetworking",
@@ -28,22 +28,22 @@
       };
       "OBJ_10" = {
          isa = "PBXFileReference";
-         path = "PH10MinClientData.swift";
+         path = "PHClient.swift";
          sourceTree = "<group>";
       };
       "OBJ_11" = {
          isa = "PBXFileReference";
-         path = "PH10MinData.swift";
+         path = "PHClientRecord.swift";
          sourceTree = "<group>";
       };
       "OBJ_12" = {
          isa = "PBXFileReference";
-         path = "PHClient.swift";
+         path = "PHClientTimeline.swift";
          sourceTree = "<group>";
       };
       "OBJ_13" = {
          isa = "PBXFileReference";
-         path = "PHClientRecord.swift";
+         path = "PHForwardDestination.swift";
          sourceTree = "<group>";
       };
       "OBJ_14" = {
@@ -53,22 +53,22 @@
       };
       "OBJ_15" = {
          isa = "PBXFileReference";
-         path = "PHResolverError.swift";
+         path = "PHProviderError.swift";
          sourceTree = "<group>";
       };
       "OBJ_16" = {
          isa = "PBXFileReference";
-         path = "PHSparseClientData.swift";
+         path = "PHRequestRatioTimeline.swift";
          sourceTree = "<group>";
       };
       "OBJ_17" = {
          isa = "PBXFileReference";
-         path = "PHState.swift";
+         path = "PHSparseClientData.swift";
          sourceTree = "<group>";
       };
       "OBJ_18" = {
          isa = "PBXFileReference";
-         path = "PHStatus.swift";
+         path = "PHState.swift";
          sourceTree = "<group>";
       };
       "OBJ_19" = {
@@ -87,77 +87,64 @@
       };
       "OBJ_20" = {
          isa = "PBXFileReference";
-         path = "PHTopQueries.swift";
+         path = "PHSummary.swift";
          sourceTree = "<group>";
       };
       "OBJ_21" = {
          isa = "PBXFileReference";
-         path = "PHProvider.swift";
+         path = "PHTopQueries.swift";
          sourceTree = "<group>";
       };
       "OBJ_22" = {
+         isa = "PBXFileReference";
+         path = "PHProvider.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_23" = {
          isa = "PBXGroup";
          children = (
-            "OBJ_23",
             "OBJ_24",
             "OBJ_25",
-            "OBJ_26"
+            "OBJ_26",
+            "OBJ_27"
          );
          name = "Protocols";
          path = "Protocols";
          sourceTree = "<group>";
       };
-      "OBJ_23" = {
+      "OBJ_24" = {
          isa = "PBXFileReference";
          path = "PHInstance+Comparable.swift";
          sourceTree = "<group>";
       };
-      "OBJ_24" = {
+      "OBJ_25" = {
          isa = "PBXFileReference";
          path = "PHInstance+Hashable.swift";
          sourceTree = "<group>";
       };
-      "OBJ_25" = {
+      "OBJ_26" = {
          isa = "PBXFileReference";
          path = "PHInstance.swift";
          sourceTree = "<group>";
       };
-      "OBJ_26" = {
+      "OBJ_27" = {
          isa = "PBXFileReference";
          path = "PHSession.swift";
          sourceTree = "<group>";
       };
-      "OBJ_27" = {
-         isa = "PBXGroup";
-         children = (
-            "OBJ_28"
-         );
-         name = "Tests";
-         path = "";
-         sourceTree = "SOURCE_ROOT";
-      };
       "OBJ_28" = {
-         isa = "PBXGroup";
-         children = (
-            "OBJ_29",
-            "OBJ_34",
-            "OBJ_35"
-         );
-         name = "PiholeNetworkingTests";
-         path = "Tests/PiholeNetworkingTests";
-         sourceTree = "SOURCE_ROOT";
+         isa = "PBXFileReference";
+         path = "Publisher+Extensions.swift";
+         sourceTree = "<group>";
       };
       "OBJ_29" = {
          isa = "PBXGroup";
          children = (
-            "OBJ_30",
-            "OBJ_31",
-            "OBJ_32",
-            "OBJ_33"
+            "OBJ_30"
          );
-         name = "Helpers";
-         path = "Helpers";
-         sourceTree = "<group>";
+         name = "Tests";
+         path = "";
+         sourceTree = "SOURCE_ROOT";
       };
       "OBJ_3" = {
          isa = "XCBuildConfiguration";
@@ -202,36 +189,65 @@
          name = "Debug";
       };
       "OBJ_30" = {
-         isa = "PBXFileReference";
-         path = "ConcreteInstance.swift";
-         sourceTree = "<group>";
+         isa = "PBXGroup";
+         children = (
+            "OBJ_31",
+            "OBJ_37",
+            "OBJ_38"
+         );
+         name = "PiholeNetworkingTests";
+         path = "Tests/PiholeNetworkingTests";
+         sourceTree = "SOURCE_ROOT";
       };
       "OBJ_31" = {
-         isa = "PBXFileReference";
-         path = "Extensions.swift";
+         isa = "PBXGroup";
+         children = (
+            "OBJ_32",
+            "OBJ_33",
+            "OBJ_34",
+            "OBJ_35",
+            "OBJ_36"
+         );
+         name = "Helpers";
+         path = "Helpers";
          sourceTree = "<group>";
       };
       "OBJ_32" = {
          isa = "PBXFileReference";
-         path = "MockJSON.swift";
+         path = "ConcreteInstance.swift";
          sourceTree = "<group>";
       };
       "OBJ_33" = {
          isa = "PBXFileReference";
-         path = "URLProtocolMock.swift";
+         path = "Extensions.swift";
          sourceTree = "<group>";
       };
       "OBJ_34" = {
          isa = "PBXFileReference";
-         path = "PiholeNetworkingTests.swift";
+         path = "MockJSON.swift";
          sourceTree = "<group>";
       };
       "OBJ_35" = {
          isa = "PBXFileReference";
-         path = "XCTestManifests.swift";
+         path = "MockSession.swift";
          sourceTree = "<group>";
       };
       "OBJ_36" = {
+         isa = "PBXFileReference";
+         path = "URLProtocolMock.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_37" = {
+         isa = "PBXFileReference";
+         path = "PiholeNetworkingTests.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_38" = {
+         isa = "PBXFileReference";
+         path = "XCTestManifests.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_39" = {
          isa = "PBXGroup";
          children = (
             "PiholeNetworking::PiholeNetworkingTests::Product",
@@ -240,11 +256,6 @@
          name = "Products";
          path = "";
          sourceTree = "BUILT_PRODUCTS_DIR";
-      };
-      "OBJ_39" = {
-         isa = "PBXFileReference";
-         path = "build";
-         sourceTree = "SOURCE_ROOT";
       };
       "OBJ_4" = {
          isa = "XCBuildConfiguration";
@@ -284,21 +295,21 @@
          };
          name = "Release";
       };
-      "OBJ_40" = {
+      "OBJ_42" = {
          isa = "PBXFileReference";
          path = "README.md";
          sourceTree = "<group>";
       };
-      "OBJ_42" = {
+      "OBJ_44" = {
          isa = "XCConfigurationList";
          buildConfigurations = (
-            "OBJ_43",
-            "OBJ_44"
+            "OBJ_45",
+            "OBJ_46"
          );
          defaultConfigurationIsVisible = "0";
          defaultConfigurationName = "Release";
       };
-      "OBJ_43" = {
+      "OBJ_45" = {
          isa = "XCBuildConfiguration";
          buildSettings = {
             ENABLE_TESTABILITY = "YES";
@@ -339,7 +350,7 @@
          };
          name = "Debug";
       };
-      "OBJ_44" = {
+      "OBJ_46" = {
          isa = "XCBuildConfiguration";
          buildSettings = {
             ENABLE_TESTABILITY = "YES";
@@ -380,11 +391,9 @@
          };
          name = "Release";
       };
-      "OBJ_45" = {
+      "OBJ_47" = {
          isa = "PBXSourcesBuildPhase";
          files = (
-            "OBJ_46",
-            "OBJ_47",
             "OBJ_48",
             "OBJ_49",
             "OBJ_50",
@@ -398,77 +407,72 @@
             "OBJ_58",
             "OBJ_59",
             "OBJ_60",
-            "OBJ_61"
+            "OBJ_61",
+            "OBJ_62",
+            "OBJ_63",
+            "OBJ_64",
+            "OBJ_65"
          );
-      };
-      "OBJ_46" = {
-         isa = "PBXBuildFile";
-         fileRef = "OBJ_10";
-      };
-      "OBJ_47" = {
-         isa = "PBXBuildFile";
-         fileRef = "OBJ_11";
       };
       "OBJ_48" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_12";
+         fileRef = "OBJ_10";
       };
       "OBJ_49" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_13";
+         fileRef = "OBJ_11";
       };
       "OBJ_5" = {
          isa = "PBXGroup";
          children = (
             "OBJ_6",
             "OBJ_7",
-            "OBJ_27",
-            "OBJ_36",
+            "OBJ_29",
             "OBJ_39",
-            "OBJ_40"
+            "OBJ_42"
          );
          path = "";
          sourceTree = "<group>";
       };
       "OBJ_50" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_14";
+         fileRef = "OBJ_12";
       };
       "OBJ_51" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_15";
+         fileRef = "OBJ_13";
       };
       "OBJ_52" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_16";
+         fileRef = "OBJ_14";
       };
       "OBJ_53" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_17";
+         fileRef = "OBJ_15";
       };
       "OBJ_54" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_18";
+         fileRef = "OBJ_16";
       };
       "OBJ_55" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_19";
+         fileRef = "OBJ_17";
       };
       "OBJ_56" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_20";
+         fileRef = "OBJ_18";
       };
       "OBJ_57" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_21";
+         fileRef = "OBJ_19";
       };
       "OBJ_58" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_23";
+         fileRef = "OBJ_20";
       };
       "OBJ_59" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_24";
+         fileRef = "OBJ_21";
       };
       "OBJ_6" = {
          isa = "PBXFileReference";
@@ -478,27 +482,43 @@
       };
       "OBJ_60" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_25";
+         fileRef = "OBJ_22";
       };
       "OBJ_61" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_26";
+         fileRef = "OBJ_24";
       };
       "OBJ_62" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_25";
+      };
+      "OBJ_63" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_26";
+      };
+      "OBJ_64" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_27";
+      };
+      "OBJ_65" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_28";
+      };
+      "OBJ_66" = {
          isa = "PBXFrameworksBuildPhase";
          files = (
          );
       };
-      "OBJ_64" = {
+      "OBJ_68" = {
          isa = "XCConfigurationList";
          buildConfigurations = (
-            "OBJ_65",
-            "OBJ_66"
+            "OBJ_69",
+            "OBJ_70"
          );
          defaultConfigurationIsVisible = "0";
          defaultConfigurationName = "Release";
       };
-      "OBJ_65" = {
+      "OBJ_69" = {
          isa = "XCBuildConfiguration";
          buildSettings = {
             LD = "/usr/bin/true";
@@ -515,34 +535,6 @@
             SWIFT_VERSION = "5.0";
          };
          name = "Debug";
-      };
-      "OBJ_66" = {
-         isa = "XCBuildConfiguration";
-         buildSettings = {
-            LD = "/usr/bin/true";
-            OTHER_SWIFT_FLAGS = (
-               "-swift-version",
-               "5",
-               "-I",
-               "$(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2",
-               "-sdk",
-               "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk",
-               "-package-description-version",
-               "5.3.0"
-            );
-            SWIFT_VERSION = "5.0";
-         };
-         name = "Release";
-      };
-      "OBJ_67" = {
-         isa = "PBXSourcesBuildPhase";
-         files = (
-            "OBJ_68"
-         );
-      };
-      "OBJ_68" = {
-         isa = "PBXBuildFile";
-         fileRef = "OBJ_6";
       };
       "OBJ_7" = {
          isa = "PBXGroup";
@@ -554,176 +546,196 @@
          sourceTree = "SOURCE_ROOT";
       };
       "OBJ_70" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            LD = "/usr/bin/true";
+            OTHER_SWIFT_FLAGS = (
+               "-swift-version",
+               "5",
+               "-I",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2",
+               "-sdk",
+               "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk",
+               "-package-description-version",
+               "5.3.0"
+            );
+            SWIFT_VERSION = "5.0";
+         };
+         name = "Release";
+      };
+      "OBJ_71" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_72"
+         );
+      };
+      "OBJ_72" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_6";
+      };
+      "OBJ_74" = {
          isa = "XCConfigurationList";
          buildConfigurations = (
-            "OBJ_71",
-            "OBJ_72"
+            "OBJ_75",
+            "OBJ_76"
          );
          defaultConfigurationIsVisible = "0";
          defaultConfigurationName = "Release";
       };
-      "OBJ_71" = {
+      "OBJ_75" = {
          isa = "XCBuildConfiguration";
          buildSettings = {
          };
          name = "Debug";
-      };
-      "OBJ_72" = {
-         isa = "XCBuildConfiguration";
-         buildSettings = {
-         };
-         name = "Release";
-      };
-      "OBJ_73" = {
-         isa = "PBXTargetDependency";
-         target = "PiholeNetworking::PiholeNetworkingTests";
-      };
-      "OBJ_75" = {
-         isa = "XCConfigurationList";
-         buildConfigurations = (
-            "OBJ_76",
-            "OBJ_77"
-         );
-         defaultConfigurationIsVisible = "0";
-         defaultConfigurationName = "Release";
       };
       "OBJ_76" = {
          isa = "XCBuildConfiguration";
          buildSettings = {
-            CLANG_ENABLE_MODULES = "YES";
-            EMBEDDED_CONTENT_CONTAINS_SWIFT = "YES";
-            FRAMEWORK_SEARCH_PATHS = (
-               "$(inherited)",
-               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
-            );
-            HEADER_SEARCH_PATHS = (
-               "$(inherited)"
-            );
-            INFOPLIST_FILE = "PiholeNetworking.xcodeproj/PiholeNetworkingTests_Info.plist";
-            IPHONEOS_DEPLOYMENT_TARGET = "14.0";
-            LD_RUNPATH_SEARCH_PATHS = (
-               "$(inherited)",
-               "@loader_path/../Frameworks",
-               "@loader_path/Frameworks"
-            );
-            MACOSX_DEPLOYMENT_TARGET = "10.15";
-            OTHER_CFLAGS = (
-               "$(inherited)"
-            );
-            OTHER_LDFLAGS = (
-               "$(inherited)"
-            );
-            OTHER_SWIFT_FLAGS = (
-               "$(inherited)"
-            );
-            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
-               "$(inherited)"
-            );
-            SWIFT_VERSION = "5.0";
-            TARGET_NAME = "PiholeNetworkingTests";
-            TVOS_DEPLOYMENT_TARGET = "13.0";
-            WATCHOS_DEPLOYMENT_TARGET = "6.0";
-         };
-         name = "Debug";
-      };
-      "OBJ_77" = {
-         isa = "XCBuildConfiguration";
-         buildSettings = {
-            CLANG_ENABLE_MODULES = "YES";
-            EMBEDDED_CONTENT_CONTAINS_SWIFT = "YES";
-            FRAMEWORK_SEARCH_PATHS = (
-               "$(inherited)",
-               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
-            );
-            HEADER_SEARCH_PATHS = (
-               "$(inherited)"
-            );
-            INFOPLIST_FILE = "PiholeNetworking.xcodeproj/PiholeNetworkingTests_Info.plist";
-            IPHONEOS_DEPLOYMENT_TARGET = "14.0";
-            LD_RUNPATH_SEARCH_PATHS = (
-               "$(inherited)",
-               "@loader_path/../Frameworks",
-               "@loader_path/Frameworks"
-            );
-            MACOSX_DEPLOYMENT_TARGET = "10.15";
-            OTHER_CFLAGS = (
-               "$(inherited)"
-            );
-            OTHER_LDFLAGS = (
-               "$(inherited)"
-            );
-            OTHER_SWIFT_FLAGS = (
-               "$(inherited)"
-            );
-            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
-               "$(inherited)"
-            );
-            SWIFT_VERSION = "5.0";
-            TARGET_NAME = "PiholeNetworkingTests";
-            TVOS_DEPLOYMENT_TARGET = "13.0";
-            WATCHOS_DEPLOYMENT_TARGET = "6.0";
          };
          name = "Release";
       };
-      "OBJ_78" = {
-         isa = "PBXSourcesBuildPhase";
-         files = (
-            "OBJ_79",
-            "OBJ_80",
-            "OBJ_81",
-            "OBJ_82",
-            "OBJ_83",
-            "OBJ_84"
-         );
+      "OBJ_77" = {
+         isa = "PBXTargetDependency";
+         target = "PiholeNetworking::PiholeNetworkingTests";
       };
       "OBJ_79" = {
-         isa = "PBXBuildFile";
-         fileRef = "OBJ_30";
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_80",
+            "OBJ_81"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
       };
       "OBJ_8" = {
          isa = "PBXGroup";
          children = (
             "OBJ_9",
-            "OBJ_21",
-            "OBJ_22"
+            "OBJ_22",
+            "OBJ_23",
+            "OBJ_28"
          );
          name = "PiholeNetworking";
          path = "Sources/PiholeNetworking";
          sourceTree = "SOURCE_ROOT";
       };
       "OBJ_80" = {
-         isa = "PBXBuildFile";
-         fileRef = "OBJ_31";
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CLANG_ENABLE_MODULES = "YES";
+            EMBEDDED_CONTENT_CONTAINS_SWIFT = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)"
+            );
+            INFOPLIST_FILE = "PiholeNetworking.xcodeproj/PiholeNetworkingTests_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "14.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "@loader_path/../Frameworks",
+               "@loader_path/Frameworks"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.15";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "PiholeNetworkingTests";
+            TVOS_DEPLOYMENT_TARGET = "13.0";
+            WATCHOS_DEPLOYMENT_TARGET = "6.0";
+         };
+         name = "Debug";
       };
       "OBJ_81" = {
-         isa = "PBXBuildFile";
-         fileRef = "OBJ_32";
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CLANG_ENABLE_MODULES = "YES";
+            EMBEDDED_CONTENT_CONTAINS_SWIFT = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)"
+            );
+            INFOPLIST_FILE = "PiholeNetworking.xcodeproj/PiholeNetworkingTests_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "14.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "@loader_path/../Frameworks",
+               "@loader_path/Frameworks"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.15";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "PiholeNetworkingTests";
+            TVOS_DEPLOYMENT_TARGET = "13.0";
+            WATCHOS_DEPLOYMENT_TARGET = "6.0";
+         };
+         name = "Release";
       };
       "OBJ_82" = {
-         isa = "PBXBuildFile";
-         fileRef = "OBJ_33";
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_83",
+            "OBJ_84",
+            "OBJ_85",
+            "OBJ_86",
+            "OBJ_87",
+            "OBJ_88",
+            "OBJ_89"
+         );
       };
       "OBJ_83" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_34";
+         fileRef = "OBJ_32";
       };
       "OBJ_84" = {
          isa = "PBXBuildFile";
-         fileRef = "OBJ_35";
+         fileRef = "OBJ_33";
       };
       "OBJ_85" = {
-         isa = "PBXFrameworksBuildPhase";
-         files = (
-            "OBJ_86"
-         );
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_34";
       };
       "OBJ_86" = {
          isa = "PBXBuildFile";
-         fileRef = "PiholeNetworking::PiholeNetworking::Product";
+         fileRef = "OBJ_35";
       };
       "OBJ_87" = {
-         isa = "PBXTargetDependency";
-         target = "PiholeNetworking::PiholeNetworking";
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_36";
+      };
+      "OBJ_88" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_37";
+      };
+      "OBJ_89" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_38";
       };
       "OBJ_9" = {
          isa = "PBXGroup";
@@ -738,18 +750,33 @@
             "OBJ_17",
             "OBJ_18",
             "OBJ_19",
-            "OBJ_20"
+            "OBJ_20",
+            "OBJ_21"
          );
          name = "Models";
          path = "Models";
          sourceTree = "<group>";
       };
+      "OBJ_90" = {
+         isa = "PBXFrameworksBuildPhase";
+         files = (
+            "OBJ_91"
+         );
+      };
+      "OBJ_91" = {
+         isa = "PBXBuildFile";
+         fileRef = "PiholeNetworking::PiholeNetworking::Product";
+      };
+      "OBJ_92" = {
+         isa = "PBXTargetDependency";
+         target = "PiholeNetworking::PiholeNetworking";
+      };
       "PiholeNetworking::PiholeNetworking" = {
          isa = "PBXNativeTarget";
-         buildConfigurationList = "OBJ_42";
+         buildConfigurationList = "OBJ_44";
          buildPhases = (
-            "OBJ_45",
-            "OBJ_62"
+            "OBJ_47",
+            "OBJ_66"
          );
          dependencies = (
          );
@@ -765,24 +792,24 @@
       };
       "PiholeNetworking::PiholeNetworkingPackageTests::ProductTarget" = {
          isa = "PBXAggregateTarget";
-         buildConfigurationList = "OBJ_70";
+         buildConfigurationList = "OBJ_74";
          buildPhases = (
          );
          dependencies = (
-            "OBJ_73"
+            "OBJ_77"
          );
          name = "PiholeNetworkingPackageTests";
          productName = "PiholeNetworkingPackageTests";
       };
       "PiholeNetworking::PiholeNetworkingTests" = {
          isa = "PBXNativeTarget";
-         buildConfigurationList = "OBJ_75";
+         buildConfigurationList = "OBJ_79";
          buildPhases = (
-            "OBJ_78",
-            "OBJ_85"
+            "OBJ_82",
+            "OBJ_90"
          );
          dependencies = (
-            "OBJ_87"
+            "OBJ_92"
          );
          name = "PiholeNetworkingTests";
          productName = "PiholeNetworkingTests";
@@ -796,9 +823,9 @@
       };
       "PiholeNetworking::SwiftPMPackageDescription" = {
          isa = "PBXNativeTarget";
-         buildConfigurationList = "OBJ_64";
+         buildConfigurationList = "OBJ_68";
          buildPhases = (
-            "OBJ_67"
+            "OBJ_71"
          );
          dependencies = (
          );
