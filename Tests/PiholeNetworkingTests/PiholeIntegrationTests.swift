@@ -139,4 +139,35 @@ class PiholeIntegrationTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 
+	final func testValidatePassword() throws {
+		let promise = XCTestExpectation()
+		let promise2 = XCTestExpectation()
+		provider.verifyPassword(unauthenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { respone in
+				XCTAssertFalse(respone)
+				promise.fulfill()
+			}.store(in: &cancellables)
+		provider.verifyPassword(authenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise2.fulfill()
+				}
+			} receiveValue: { respone in
+				XCTAssertTrue(respone)
+				promise2.fulfill()
+			}.store(in: &cancellables)
+		
+		wait(for: [promise, promise2], timeout: 1)
+	}
+	
 }
