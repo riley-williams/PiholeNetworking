@@ -382,6 +382,101 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		BF836F7E2626A9CA002764B8 /* CI */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"SWIFT_PACKAGE=1",
+					"DEBUG=1",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -DXcode";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SWIFT_PACKAGE DEBUG XCS";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				USE_HEADERMAP = NO;
+			};
+			name = CI;
+		};
+		BF836F7F2626A9CA002764B8 /* CI */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = PiholeNetworking.xcodeproj/PiholeNetworking_Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = PiholeNetworking;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
+				TARGET_NAME = PiholeNetworking;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				WATCHOS_DEPLOYMENT_TARGET = 6.0;
+			};
+			name = CI;
+		};
+		BF836F802626A9CA002764B8 /* CI */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD = /usr/bin/true;
+				OTHER_SWIFT_FLAGS = "-swift-version 5 -I $(TOOLCHAIN_DIR)/usr/lib/swift/pm/4_2 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -package-description-version 5.3.0";
+				SWIFT_VERSION = 5.0;
+			};
+			name = CI;
+		};
+		BF836F812626A9CA002764B8 /* CI */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = CI;
+		};
+		BF836F822626A9CA002764B8 /* CI */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = PiholeNetworking.xcodeproj/PiholeNetworkingTests_Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
+				SWIFT_VERSION = 5.0;
+				TARGET_NAME = PiholeNetworkingTests;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				WATCHOS_DEPLOYMENT_TARGET = 6.0;
+			};
+			name = CI;
+		};
 		OBJ_3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -576,6 +671,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				OBJ_3 /* Debug */,
+				BF836F7E2626A9CA002764B8 /* CI */,
 				OBJ_4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -585,6 +681,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				OBJ_45 /* Debug */,
+				BF836F7F2626A9CA002764B8 /* CI */,
 				OBJ_46 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -594,6 +691,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				OBJ_68 /* Debug */,
+				BF836F802626A9CA002764B8 /* CI */,
 				OBJ_69 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -603,6 +701,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				OBJ_74 /* Debug */,
+				BF836F812626A9CA002764B8 /* CI */,
 				OBJ_75 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -612,6 +711,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				OBJ_79 /* Debug */,
+				BF836F822626A9CA002764B8 /* CI */,
 				OBJ_80 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
