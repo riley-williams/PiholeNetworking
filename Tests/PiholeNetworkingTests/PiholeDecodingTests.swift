@@ -132,6 +132,28 @@ class PiholeDecodingTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 	
+	final func testDecodeRequestRatioTimelineExperimental() throws {
+		let session = MockSession(result: MockJSON.overTimeData10Mins)
+		let provider = PHProvider(session: session)
+		
+		let promise = XCTestExpectation()
+		
+		provider.getRequestRatioTimeline(authenticatedInstance, from: Date(), until: Date(), interval: 123)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { timeline in
+				XCTAssertEqual(timeline.domains["1615774500"], 37)
+				XCTAssertEqual(timeline.ads["1615824300"], 24)
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
+	
 	final func testSparseClientTimelineResponse() throws {
 		let data = MockJSON.overTimeDataClients.data(using: .utf8)!
 		let clientData = try decoder.decode(PHClientTimeline.self, from: data)

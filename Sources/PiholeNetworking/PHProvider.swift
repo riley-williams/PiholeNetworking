@@ -9,8 +9,8 @@ import Foundation
 import Combine
 
 public class PHProvider {
-	private let session: PHSession
-	private let decoder: JSONDecoder
+	internal let session: PHSession
+	internal let decoder: JSONDecoder
 	
 	/// Initialize the provider
 	///
@@ -293,7 +293,7 @@ public class PHProvider {
 	}
 	
 	/// Provides convenient handling of errors due to networking, decoding, and authentication
-	private func resultDecoderPublisher<T: Decodable>(url: URL, type:T.Type) -> AnyPublisher<T, PHProviderError> {
+	internal func resultDecoderPublisher<T: Decodable>(url: URL, type:T.Type) -> AnyPublisher<T, PHProviderError> {
 		session.simpleDataTaskPublisher(for: url)
 			.tryMap { [decoder] result in
 				// Pihole returns "[]" when authentication is required

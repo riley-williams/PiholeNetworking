@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		BF20B95C262610E7006BECA1 /* PiholeFailureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF20B95B262610E7006BECA1 /* PiholeFailureTests.swift */; };
 		BF20B96226261213006BECA1 /* MockFailureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF20B96126261213006BECA1 /* MockFailureSession.swift */; };
+		BF836F5826266760002764B8 /* PHProvider+Experimental.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF836F5726266760002764B8 /* PHProvider+Experimental.swift */; };
 		OBJ_48 /* PHClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* PHClient.swift */; };
 		OBJ_49 /* PHClientRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* PHClientRecord.swift */; };
 		OBJ_50 /* PHClientTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* PHClientTimeline.swift */; };
@@ -72,6 +73,7 @@
 /* Begin PBXFileReference section */
 		BF20B95B262610E7006BECA1 /* PiholeFailureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiholeFailureTests.swift; sourceTree = "<group>"; };
 		BF20B96126261213006BECA1 /* MockFailureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFailureSession.swift; sourceTree = "<group>"; };
+		BF836F5726266760002764B8 /* PHProvider+Experimental.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHProvider+Experimental.swift"; sourceTree = "<group>"; };
 		OBJ_10 /* PHClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHClient.swift; sourceTree = "<group>"; };
 		OBJ_11 /* PHClientRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHClientRecord.swift; sourceTree = "<group>"; };
 		OBJ_12 /* PHClientTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHClientTimeline.swift; sourceTree = "<group>"; };
@@ -176,7 +178,7 @@
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -185,7 +187,6 @@
 				OBJ_39 /* Products */,
 				OBJ_42 /* README.md */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
@@ -201,6 +202,7 @@
 			children = (
 				OBJ_9 /* Models */,
 				OBJ_21 /* PHProvider.swift */,
+				BF836F5726266760002764B8 /* PHProvider+Experimental.swift */,
 				OBJ_22 /* Protocols */,
 				OBJ_27 /* Publisher+Extensions.swift */,
 			);
@@ -292,7 +294,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_39 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -320,6 +322,7 @@
 				OBJ_55 /* PHSparseClientData.swift in Sources */,
 				OBJ_56 /* PHState.swift in Sources */,
 				OBJ_57 /* PHSummary.swift in Sources */,
+				BF836F5826266760002764B8 /* PHProvider+Experimental.swift in Sources */,
 				OBJ_58 /* PHTopQueries.swift in Sources */,
 				OBJ_59 /* PHProvider.swift in Sources */,
 				OBJ_60 /* PHInstance+Comparable.swift in Sources */,

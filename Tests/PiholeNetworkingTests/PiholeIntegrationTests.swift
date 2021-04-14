@@ -42,7 +42,7 @@ class PiholeIntegrationTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 	
-	final func testDecodeTopQueries() throws {
+	final func testGetTopQueries() throws {
 		let promise = XCTestExpectation()
 		provider.getTopQueries(authenticatedInstance, max: 6)
 			.sink { completion in
@@ -60,7 +60,7 @@ class PiholeIntegrationTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 	
-	final func testDecodeTopQueriesUnauthenticated() throws {
+	final func testGetTopQueriesUnauthenticated() throws {
 		let promise = XCTestExpectation()
 		provider.getTopQueries(unauthenticatedInstance, max: 6)
 			.sink { completion in
@@ -78,7 +78,7 @@ class PiholeIntegrationTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 	
-	final func testDecodeTopBlockedClients() throws {
+	final func testGetTopBlockedClients() throws {
 		let promise = XCTestExpectation()
 		provider.getTopBlockedClients(authenticatedInstance, max: 3)
 			.sink { completion in
@@ -96,7 +96,7 @@ class PiholeIntegrationTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 	
-	final func testDecodeTopClients() throws {
+	final func testGetTopClients() throws {
 		let promise = XCTestExpectation()
 		provider.getTopClients(authenticatedInstance, max: 3)
 			.sink { completion in
@@ -114,7 +114,7 @@ class PiholeIntegrationTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 
-	final func testDecodeRequestRatioTimeline() throws {
+	final func testGetRequestRatioTimeline() throws {
 		let promise = XCTestExpectation()
 		provider.getRequestRatioTimeline(unauthenticatedInstance)
 			.sink { completion in
@@ -130,6 +130,43 @@ class PiholeIntegrationTests: XCTestCase {
 				promise.fulfill()
 			}.store(in: &cancellables)
 		wait(for: [promise], timeout: 1)
+	}
+	
+	final func testGetRequestRatioTimelineExperimental() throws {
+		let session = MockSession(result: MockJSON.overTimeData10Mins)
+		let provider = PHProvider(session: session)
+		
+		let promise = XCTestExpectation()
+		let startDate = Date(timeIntervalSince1970: 1615347298)
+		let endDate = Date(timeIntervalSince1970: 1615862098)
+		let interval: TimeInterval = 1000
+		provider.getRequestRatioTimeline(authenticatedInstance, from: startDate, until: endDate, interval: interval)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { timeline in
+				XCTAssertTrue(timeline.ads.values.contains { $0 > 0 })
+				XCTAssertTrue(timeline.domains.values.contains { $0 > 0 })
+				let startTimestamp = startDate.timeIntervalSince1970
+				let endTimestamp = endDate.timeIntervalSince1970
+				
+				let adTimestamps = timeline.ads.keys.compactMap(TimeInterval.init)
+				let domainTimestamps = timeline.ads.keys.compactMap(TimeInterval.init)
+				
+				XCTAssertEqual(adTimestamps.count, timeline.ads.count)
+				XCTAssertEqual(domainTimestamps.count, timeline.domains.count)
+				
+				let range = (startTimestamp-interval...endTimestamp)
+				XCTAssertEqual(adTimestamps.filter(range.contains).count, adTimestamps.count)
+				XCTAssertEqual(domainTimestamps.filter(range.contains).count, domainTimestamps.count)
+				
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 5)
 	}
 	
 	final func testGetForwardingDestinations() throws {
