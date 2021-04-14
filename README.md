@@ -1,5 +1,5 @@
 # PiholeNetworking
-[![Swift](https://github.com/riley-williams/PiholeNetworking/actions/workflows/swift.yml/badge.svg)](https://github.com/riley-williams/PiholeNetworking/actions/workflows/swift.yml)
+[![Swift](https://github.com/riley-williams/PiholeNetworking/actions/workflows/swift.yml/badge.svg)](https://github.com/riley-williams/PiholeNetworking/actions/workflows/swift.yml) [![codecov](https://codecov.io/gh/riley-williams/PiholeNetworking/branch/main/graph/badge.svg?token=F04LYNUK5V)](https://codecov.io/gh/riley-williams/PiholeNetworking)
 
 Open source networking library for interacting with Pi-hole DNS blocker instances
 
