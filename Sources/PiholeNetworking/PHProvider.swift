@@ -274,7 +274,7 @@ public class PHProvider {
 	/// - Parameter instance: The Pi-hole instance to disable
 	/// - Parameter duration: The duration to disable the Pi-hole. Omitting this parameter will disable indefinitely
 	/// - Returns: The state as reported by Pi-hole after this operation
-	public func disable<T: PHInstance>(_ instance: T, _ duration: Int? = nil) -> AnyPublisher<PHState, PHProviderError> {
+	public func disable<T: PHInstance>(_ instance: T, for duration: Int? = nil) -> AnyPublisher<PHState, PHProviderError> {
 		var arg = "disable"
 		if let duration = duration {
 			arg += "=\(duration)"

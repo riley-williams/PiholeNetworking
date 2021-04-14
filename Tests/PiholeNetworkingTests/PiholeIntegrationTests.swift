@@ -15,6 +15,14 @@ class PiholeIntegrationTests: XCTestCase {
 	let authenticatedInstance = ConcreteInstance("192.168.1.10", password: "8MzrcBRm")
 	let provider = PHProvider()
 	
+	var isXcodeServer: Bool {
+		#if XCS
+		return true
+		#else
+		return false
+		#endif
+	}
+	
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -24,6 +32,7 @@ class PiholeIntegrationTests: XCTestCase {
     }
 
 	final func testGetSummary() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.getSummary(unauthenticatedInstance)
 			.sink { completion in
@@ -43,6 +52,7 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	final func testGetTopQueries() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.getTopQueries(authenticatedInstance, max: 6)
 			.sink { completion in
@@ -61,6 +71,7 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	final func testGetTopQueriesUnauthenticated() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.getTopQueries(unauthenticatedInstance, max: 6)
 			.sink { completion in
@@ -79,6 +90,7 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	final func testGetTopBlockedClients() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.getTopBlockedClients(authenticatedInstance, max: 3)
 			.sink { completion in
@@ -97,6 +109,7 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	final func testGetTopClients() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.getTopClients(authenticatedInstance, max: 3)
 			.sink { completion in
@@ -115,6 +128,7 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 
 	final func testGetRequestRatioTimeline() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.getRequestRatioTimeline(unauthenticatedInstance)
 			.sink { completion in
@@ -132,62 +146,9 @@ class PiholeIntegrationTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 	
-	final func testGetRequestRatioTimelineExperimental() throws {
-		let session = MockSession(result: MockJSON.overTimeData10Mins)
-		let provider = PHProvider(session: session)
-		
-		let promise = XCTestExpectation()
-		let startDate = Date(timeIntervalSince1970: 1615347298)
-		let endDate = Date(timeIntervalSince1970: 1615862098)
-		let interval: TimeInterval = 1000
-		provider.getRequestRatioTimeline(authenticatedInstance, from: startDate, until: endDate, interval: interval)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { timeline in
-				XCTAssertTrue(timeline.ads.values.contains { $0 > 0 })
-				XCTAssertTrue(timeline.domains.values.contains { $0 > 0 })
-				let startTimestamp = startDate.timeIntervalSince1970
-				let endTimestamp = endDate.timeIntervalSince1970
-				
-				let adTimestamps = timeline.ads.keys.compactMap(TimeInterval.init)
-				let domainTimestamps = timeline.ads.keys.compactMap(TimeInterval.init)
-				
-				XCTAssertEqual(adTimestamps.count, timeline.ads.count)
-				XCTAssertEqual(domainTimestamps.count, timeline.domains.count)
-				
-				let range = (startTimestamp-interval...endTimestamp)
-				XCTAssertEqual(adTimestamps.filter(range.contains).count, adTimestamps.count)
-				XCTAssertEqual(domainTimestamps.filter(range.contains).count, domainTimestamps.count)
-				
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 5)
-	}
-	
-	final func testGetNetworkExperimental() throws {
-		let promise = XCTestExpectation()
-		
-		provider.getNetwork(authenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { network in
-				XCTAssertGreaterThan(network.count, 0)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
-	}
 	
 	final func testGetForwardingDestinations() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.getForwardDestinations(authenticatedInstance)
 			.sink { completion in
@@ -207,6 +168,7 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	final func testGetForwardingDestinationsUnauthenticated() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.getForwardDestinations(unauthenticatedInstance)
 			.sink { completion in
@@ -225,6 +187,7 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	final func testGetQueryTypes() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.getQueryTypes(authenticatedInstance)
 			.sink { completion in
@@ -242,6 +205,7 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	final func testGetHWInfo() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.getHWInfo(unauthenticatedInstance)
 			.sink { completion in
@@ -263,6 +227,7 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	final func testGetClientTimeline() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.getClientTimeline(authenticatedInstance)
 			.sink { completion in
@@ -286,6 +251,7 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	final func testGetClientTimelineUnauthenticated() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.getClientTimeline(unauthenticatedInstance)
 			.sink { completion in
@@ -304,6 +270,7 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 
 	final func testValidatePassword() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		let promise2 = XCTestExpectation()
 		provider.verifyPassword(unauthenticatedInstance)
@@ -336,8 +303,9 @@ class PiholeIntegrationTests: XCTestCase {
 	
 	@available(OSX 11.0, *)
 	final func testDisableEnableCycle() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
-		provider.disable(authenticatedInstance, 5)
+		provider.disable(authenticatedInstance, for: 5)
 			.flatMap { [unowned self] response -> AnyPublisher<PHState, PHProviderError> in
 				XCTAssertEqual(response, .disabled)
 				return self.provider.enable(authenticatedInstance)
@@ -360,8 +328,9 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	final func testDisableUnauthenticated() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
-		provider.disable(unauthenticatedInstance, 1)
+		provider.disable(unauthenticatedInstance, for: 1)
 			.sink { completion in
 				switch completion {
 				case .finished: break
@@ -377,6 +346,7 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	final func testEnableUnauthenticated() throws {
+		try XCTSkipIf(!isXcodeServer)
 		let promise = XCTestExpectation()
 		provider.enable(unauthenticatedInstance)
 			.sink { completion in
