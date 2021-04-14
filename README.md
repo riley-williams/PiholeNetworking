@@ -1,4 +1,5 @@
 # PiholeNetworking
+[![Swift](https://github.com/riley-williams/PiholeNetworking/actions/workflows/swift.yml/badge.svg)](https://github.com/riley-williams/PiholeNetworking/actions/workflows/swift.yml)
 
 Open source networking library for interacting with Pi-hole DNS blocker instances
 
