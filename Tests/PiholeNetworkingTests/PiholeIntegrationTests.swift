@@ -169,6 +169,24 @@ class PiholeIntegrationTests: XCTestCase {
 		wait(for: [promise], timeout: 5)
 	}
 	
+	final func testGetNetworkExperimental() throws {
+		let promise = XCTestExpectation()
+		
+		provider.getNetwork(authenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { network in
+				XCTAssertGreaterThan(network.count, 0)
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
+	
 	final func testGetForwardingDestinations() throws {
 		let promise = XCTestExpectation()
 		provider.getForwardDestinations(authenticatedInstance)

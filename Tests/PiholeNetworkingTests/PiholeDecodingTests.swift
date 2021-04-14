@@ -154,6 +154,27 @@ class PiholeDecodingTests: XCTestCase {
 		wait(for: [promise], timeout: 1)
 	}
 	
+	final func testDecodeNetworkExperimental() throws {
+		let session = MockSession(result: MockJSON.network)
+		let provider = PHProvider(session: session)
+		
+		let promise = XCTestExpectation()
+		
+		provider.getNetwork(authenticatedInstance)
+			.sink { completion in
+				switch completion {
+				case .finished: break
+				case .failure(let error):
+					XCTFail(error.localizedDescription)
+					promise.fulfill()
+				}
+			} receiveValue: { network in
+				XCTAssertEqual(network.count, 5)
+				promise.fulfill()
+			}.store(in: &cancellables)
+		wait(for: [promise], timeout: 1)
+	}
+	
 	final func testSparseClientTimelineResponse() throws {
 		let data = MockJSON.overTimeDataClients.data(using: .utf8)!
 		let clientData = try decoder.decode(PHClientTimeline.self, from: data)

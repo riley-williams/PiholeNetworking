@@ -24,6 +24,8 @@
 		BF20B95C262610E7006BECA1 /* PiholeFailureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF20B95B262610E7006BECA1 /* PiholeFailureTests.swift */; };
 		BF20B96226261213006BECA1 /* MockFailureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF20B96126261213006BECA1 /* MockFailureSession.swift */; };
 		BF836F5826266760002764B8 /* PHProvider+Experimental.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF836F5726266760002764B8 /* PHProvider+Experimental.swift */; };
+		BF836F5E26267C37002764B8 /* PHNetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF836F5D26267C37002764B8 /* PHNetworkClient.swift */; };
+		BF836F69262686E9002764B8 /* MockJSON+Experimental.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF836F6326268527002764B8 /* MockJSON+Experimental.swift */; };
 		OBJ_48 /* PHClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* PHClient.swift */; };
 		OBJ_49 /* PHClientRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* PHClientRecord.swift */; };
 		OBJ_50 /* PHClientTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* PHClientTimeline.swift */; };
@@ -74,6 +76,8 @@
 		BF20B95B262610E7006BECA1 /* PiholeFailureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiholeFailureTests.swift; sourceTree = "<group>"; };
 		BF20B96126261213006BECA1 /* MockFailureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFailureSession.swift; sourceTree = "<group>"; };
 		BF836F5726266760002764B8 /* PHProvider+Experimental.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHProvider+Experimental.swift"; sourceTree = "<group>"; };
+		BF836F5D26267C37002764B8 /* PHNetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHNetworkClient.swift; sourceTree = "<group>"; };
+		BF836F6326268527002764B8 /* MockJSON+Experimental.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockJSON+Experimental.swift"; sourceTree = "<group>"; };
 		OBJ_10 /* PHClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHClient.swift; sourceTree = "<group>"; };
 		OBJ_11 /* PHClientRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHClientRecord.swift; sourceTree = "<group>"; };
 		OBJ_12 /* PHClientTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHClientTimeline.swift; sourceTree = "<group>"; };
@@ -163,6 +167,7 @@
 				OBJ_32 /* Extensions.swift */,
 				OBJ_33 /* MockJSON+index.swift */,
 				OBJ_34 /* MockJSON.swift */,
+				BF836F6326268527002764B8 /* MockJSON+Experimental.swift */,
 				OBJ_35 /* MockSession.swift */,
 				BF20B96126261213006BECA1 /* MockFailureSession.swift */,
 			);
@@ -224,6 +229,7 @@
 				OBJ_18 /* PHState.swift */,
 				OBJ_19 /* PHSummary.swift */,
 				OBJ_20 /* PHTopQueries.swift */,
+				BF836F5D26267C37002764B8 /* PHNetworkClient.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -329,6 +335,7 @@
 				OBJ_61 /* PHInstance+Hashable.swift in Sources */,
 				OBJ_62 /* PHInstance.swift in Sources */,
 				OBJ_63 /* PHSession.swift in Sources */,
+				BF836F5E26267C37002764B8 /* PHNetworkClient.swift in Sources */,
 				OBJ_64 /* Publisher+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -349,6 +356,7 @@
 				OBJ_83 /* Extensions.swift in Sources */,
 				OBJ_84 /* MockJSON+index.swift in Sources */,
 				BF20B96226261213006BECA1 /* MockFailureSession.swift in Sources */,
+				BF836F69262686E9002764B8 /* MockJSON+Experimental.swift in Sources */,
 				OBJ_85 /* MockJSON.swift in Sources */,
 				BF20B95C262610E7006BECA1 /* PiholeFailureTests.swift in Sources */,
 				OBJ_86 /* MockSession.swift in Sources */,

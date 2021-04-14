@@ -28,4 +28,23 @@ extension PHProvider {
 		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
 		return resultDecoderPublisher(url: url, type: PHRequestRatioTimeline.self)
 	}
+	
+	/// Returns list of clients that have accessed this Pi-hole
+	///
+	/// Requires authentication
+	/// # EXPERIMENTAL/UNDOCUMENTED
+	/// - Parameters:
+	///   - instance: The Pi-hole instance to connect to
+	public func getNetwork<T: PHInstance>(_ instance: T) -> AnyPublisher<[PHNetworkClient], PHProviderError> {
+		guard let token = instance.apiKey,
+			  let url = URL(string: "http://\(instance.address)/admin/api_db.php?network&auth=\(token)")
+		else { return Fail(error: .invalidHostname).eraseToAnyPublisher() }
+		return resultDecoderPublisher(url: url, type: [String:[PHNetworkClient]].self)
+			.tryMap { result in
+				guard let clients = result["network"]
+				else { throw PHProviderError.decodingError(nil) }
+				return clients
+			}.mapPiholeNetworkingError()
+			.eraseToAnyPublisher()
+	}
 }
