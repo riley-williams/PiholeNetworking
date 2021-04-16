@@ -19,7 +19,7 @@ extension PHProvider {
 	/// - Parameter from: Start date. This will be rounded down to the nearest multiple of the interval
 	/// - Parameter until: End date. The last interval returned will always be less than this date rounded down to the nearest second
 	/// - Parameter interval: The size of each reported interval, which will be rounded down to the nearest second
-	/// - Returns: Ad and domain query counts in the interval [start date, end date]
+	/// - Returns: Ad and domain query counts in the interval [start date, end date)
 	public func getRequestRatioTimeline<T: PHInstance>(_ instance: T, from: Date, until: Date, interval: TimeInterval) -> AnyPublisher<PHRequestRatioTimeline, PHProviderError> {
 		let start = Int(from.timeIntervalSince1970)
 		let end = Int(until.timeIntervalSince1970)
