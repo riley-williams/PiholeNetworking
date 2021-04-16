@@ -249,7 +249,7 @@ public class PHProvider {
 	///
 	/// Requires authentication
 	/// - Parameter instance: The Pi-hole instance to enable
-	/// - Returns: The state as reported by Pi-hole after this operation
+	/// - Returns: The state as returned by the Pi-hole after this operation
 	public func enable<T: PHInstance>(_ instance: T) -> AnyPublisher<PHState, PHProviderError> {
 		guard let token = instance.apiKey,
 			  let url = URL(string: "http://\(instance.address)/admin/api.php?enable&auth=\(token)")

@@ -33,8 +33,7 @@ let summaryCancellable = provider.getSummary(pihole)
         print("Queries today: \(summary.queryCount)")
         print("Queries blocked today: \(summary.blockedQueryCount)")
     }
-```
-``` swift
+
 // Queries today: 49216
 // Queries blocked today: 3872
 ```
@@ -50,7 +49,6 @@ let disableCancellable = provider.disable(pihole, for: 15)
     } receiveValue: { state in
         print("Pi-hole is now \(state)")
     }
-```
-``` swift
+
 // Pi-hole is now disabled
 ```

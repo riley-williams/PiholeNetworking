@@ -10,6 +10,5 @@ import Foundation
 public enum PHState: String, Codable {
 	case enabled = "enabled"
 	case disabled = "disabled"
-	case mixed = "mixed"
 	case unknown = "unknown"
 }
