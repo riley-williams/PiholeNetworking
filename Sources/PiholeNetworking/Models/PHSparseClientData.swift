@@ -8,7 +8,7 @@
 import Foundation
 
 public struct PHSparseClientTimeline: Codable {
-	/// Sparse results of historic client record activity
+	/// Sparse results of historic client activity
 	public var records: [PHClient: [PHClientRecord]]
 	
 	public init(data: PHClientTimeline) {

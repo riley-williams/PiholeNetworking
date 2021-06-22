@@ -18,8 +18,8 @@ public protocol PHInstance {
 public extension PHInstance {
 	var address: String { "\(ip):\(port)" }
 	
-	/// API key used to access the Pi-hole API. This is generated from the password
-	/// If password is nil, this will use an empty string as the password
+	/// API key used to access the Pi-hole API. This is generated from the password.
+	/// If the password is nil, this will use an empty string as the password
 	var apiKey: String? {
 		guard let data = (password ?? "").data(using: .utf8) else { return nil }
 		let stringifiedHash = SHA256.hash(data: data)

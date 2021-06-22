@@ -13,8 +13,6 @@ public struct PHSummary: Codable {
 	public var blacklistSize:Int
 	/// The number of dns queries served today that were not blocked
 	public var queryCount:Int
-	/// The total number of dns queries served today?
-	//public var totalQueryCount:Int
 	/// The number of dns queries blocked today
 	public var blockedQueryCount:Int
 	/// The number of unique domains resolved today
@@ -38,7 +36,6 @@ public struct PHSummary: Codable {
 		case state = "status"
 		case blacklistSize = "domains_being_blocked"
 		case queryCount = "dns_queries_today"
-		//case totalQueryCount = "dns_queries_all_types"
 		case blockedQueryCount = "ads_blocked_today"
 		case uniqueDomainCount = "unique_domains"
 		case forwardedQueryCount = "queries_forwarded"

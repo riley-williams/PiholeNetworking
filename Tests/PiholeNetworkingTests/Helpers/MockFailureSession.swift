@@ -12,8 +12,7 @@ import Combine
 /// Always publishes the provided object, encoded with a JSON Encoder.
 struct MockFailureSession: PHSession {
 	var failure: URLError
-	func simpleDataTaskPublisher(for: URL) -> AnyPublisher<Data, URLError> {
-		Fail(error: failure)
-			.eraseToAnyPublisher()
+	func simpleDataTaskPublisher(for: URL) async throws -> Data {
+		throw failure
 	}
 }

@@ -12,10 +12,10 @@ import Combine
 /// Always publishes the provided object, encoded with a JSON Encoder.
 struct MockSession<T: StringProtocol>: PHSession {
 	var result: T
-	func simpleDataTaskPublisher(for: URL) -> AnyPublisher<Data, URLError> {
-		Just(result)
-			.compactMap { $0.data(using: .utf8) }
-			.setFailureType(to: URLError.self)
-			.eraseToAnyPublisher()
+	func simpleDataTaskPublisher(for: URL) async throws -> Data {
+		guard let response = result.data(using: .utf8) else {
+			throw PHProviderError.invalidHostname
+		}
+		return response
 	}
 }

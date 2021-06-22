@@ -9,13 +9,11 @@ import Foundation
 import Combine
 
 public protocol PHSession {
-	func simpleDataTaskPublisher(for: URL) -> AnyPublisher<Data, URLError>
+	func simpleDataTaskPublisher(for: URL) async throws -> Data
 }
 
 extension URLSession: PHSession {
-	public func simpleDataTaskPublisher(for url: URL) -> AnyPublisher<Data, URLError> {
-		self.dataTaskPublisher(for: url)
-			.map(\.data)
-			.eraseToAnyPublisher()
+	public func simpleDataTaskPublisher(for url: URL) async throws -> Data {
+		return try await self.data(from: url, delegate: nil).0
 	}
 }
