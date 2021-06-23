@@ -31,335 +31,170 @@ class PiholeIntegrationTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-	final func testGetSummary() throws {
+	final func testGetSummary() async throws {
 		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.getSummary(unauthenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { summary in
-				XCTAssertGreaterThan(summary.queryCount, 0)
-				let computedCount = Float(summary.blockedQueryCount)/Float(summary.queryCount)*100
-				XCTAssertEqual(computedCount, summary.percentAds, accuracy: 0.5)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let summary = try await provider.getSummary(unauthenticatedInstance)
+			
+		XCTAssertGreaterThan(summary.queryCount, 0)
+		let computedCount = Float(summary.blockedQueryCount)/Float(summary.queryCount)*100
+		XCTAssertEqual(computedCount, summary.percentAds, accuracy: 0.5)
 	}
 	
-	final func testGetTopQueries() throws {
+	final func testGetTopQueries() async throws {
 		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.getTopQueries(authenticatedInstance, max: 6)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { topQueries in
-				XCTAssertLessThanOrEqual(topQueries.topPassed.count, 6)
-				XCTAssertLessThanOrEqual(topQueries.topBlocked.count, 6)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let topQueries = try await provider.getTopQueries(authenticatedInstance, max: 6)
+			
+		XCTAssertLessThanOrEqual(topQueries.topPassed.count, 6)
+		XCTAssertLessThanOrEqual(topQueries.topBlocked.count, 6)
 	}
 	
-	final func testGetTopQueriesUnauthenticated() throws {
+	final func testGetTopQueriesUnauthenticated() async throws {
 		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.getTopQueries(unauthenticatedInstance, max: 6)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTAssertEqual(error, PHProviderError.authenticationRequired)
-					promise.fulfill()
-				}
-			} receiveValue: { _ in
-				XCTFail("Expected to not receive a valid response")
-				promise.fulfill()
-			}
-			.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		do {
+		_ = try await provider.getTopQueries(unauthenticatedInstance, max: 6)
+			XCTFail("Expected to not receive a valid response")
+		} catch let error as PHProviderError {
+			XCTAssertEqual(error, PHProviderError.authenticationRequired)
+		} catch {
+			XCTFail("Expected .authenticationRequired, got: \(error)")
+		}
 	}
 	
-	final func testGetTopBlockedClients() throws {
+	final func testGetTopBlockedClients() async throws {
 		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.getTopBlockedClients(authenticatedInstance, max: 3)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { clients in
-				XCTAssertGreaterThan(clients.count, 0)
-				XCTAssertLessThanOrEqual(clients.count, 3)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let clients = try await provider.getTopBlockedClients(authenticatedInstance, max: 3)
+			
+		XCTAssertGreaterThan(clients.count, 0)
+		XCTAssertLessThanOrEqual(clients.count, 3)
 	}
 	
-	final func testGetTopClients() throws {
+	final func testGetTopClients() async throws {
 		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.getTopClients(authenticatedInstance, max: 3)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { clients in
-				XCTAssertGreaterThan(clients.count, 0)
-				XCTAssertLessThanOrEqual(clients.count, 3)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let clients = try await provider.getTopClients(authenticatedInstance, max: 3)
+
+		XCTAssertGreaterThan(clients.count, 0)
+		XCTAssertLessThanOrEqual(clients.count, 3)
 	}
 
-	final func testGetRequestRatioTimeline() throws {
+	final func testGetRequestRatioTimeline() async throws {
 		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.getRequestRatioTimeline(unauthenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { timeline in
-				XCTAssertGreaterThan(timeline.domains.count, 0)
-				XCTAssertGreaterThan(timeline.ads.count, 0)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let timeline = try await provider.getRequestRatioTimeline(unauthenticatedInstance)
+			
+		XCTAssertGreaterThan(timeline.domains.count, 0)
+		XCTAssertGreaterThan(timeline.ads.count, 0)
 	}
 	
 	
-	final func testGetForwardingDestinations() throws {
+	final func testGetForwardingDestinations() async throws {
 		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.getForwardDestinations(authenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { destinations in
-				XCTAssertGreaterThan(destinations.count, 0)
-				let total = destinations.values.reduce(0, +)
-				XCTAssertEqual(total, 100, accuracy: 1)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
-	}
-	
-	final func testGetForwardingDestinationsUnauthenticated() throws {
-		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.getForwardDestinations(unauthenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTAssertEqual(error, PHProviderError.authenticationRequired)
-					promise.fulfill()
-				}
-			} receiveValue: { _ in
-				XCTFail("Expected to not receive a valid response")
-				promise.fulfill()
-			}
-			.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
-	}
-	
-	final func testGetQueryTypes() throws {
-		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.getQueryTypes(authenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { types in
-				XCTAssertEqual(types.values.reduce(0,+), 100, accuracy: 1)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
-	}
-	
-	final func testGetHWInfo() throws {
-		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.getHWInfo(unauthenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { info in
-				XCTAssertNotNil(info.cpuTemp)
-				XCTAssertNotNil(info.load1Min)
-				XCTAssertNotNil(info.load5Min)
-				XCTAssertNotNil(info.load15Min)
-				XCTAssertNotNil(info.memoryUsage)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
-	}
-	
-	final func testGetClientTimeline() throws {
-		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.getClientTimeline(authenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { clientTimeline in
-				XCTAssertGreaterThan(clientTimeline.clients.count, 0)
-				XCTAssertGreaterThan(clientTimeline.timestamps.first!.value.count, 0)
-				clientTimeline.timestamps.forEach {
-					if $0.value.count != clientTimeline.clients.count {
-						XCTFail("Timestamp client count mismatch")
-					}
-				}
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
-	}
-	
-	final func testGetClientTimelineUnauthenticated() throws {
-		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.getClientTimeline(unauthenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTAssertEqual(error, PHProviderError.authenticationRequired)
-					promise.fulfill()
-				}
-			} receiveValue: { _ in
-				XCTFail("Expected to not receive a valid response")
-				promise.fulfill()
-			}
-			.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
-	}
-
-	final func testValidatePassword() throws {
-		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		let promise2 = XCTestExpectation()
-		provider.verifyPassword(unauthenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { respone in
-				XCTAssertFalse(respone)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		provider.verifyPassword(authenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise2.fulfill()
-				}
-			} receiveValue: { respone in
-				XCTAssertTrue(respone)
-				promise2.fulfill()
-			}.store(in: &cancellables)
+		let destinations = try await provider.getForwardDestinations(authenticatedInstance)
 		
-		wait(for: [promise, promise2], timeout: 1)
+		XCTAssertGreaterThan(destinations.count, 0)
+		let total = destinations.values.reduce(0, +)
+		XCTAssertEqual(total, 100, accuracy: 1)
 	}
 	
-	@available(OSX 11.0, *)
-	final func testDisableEnableCycle() throws {
+	final func testGetForwardingDestinationsUnauthenticated() async throws {
 		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.disable(authenticatedInstance, for: 5)
-			.flatMap { [unowned self] response -> AnyPublisher<PHState, PHProviderError> in
-				XCTAssertEqual(response, .disabled)
-				return self.provider.enable(authenticatedInstance)
-			}.flatMap { [unowned self] response -> AnyPublisher<PHSummary, PHProviderError> in
-				XCTAssertEqual(response, .enabled)
-				return self.provider.getSummary(authenticatedInstance)
+		do {
+			_ = try await provider.getForwardDestinations(unauthenticatedInstance)
+			XCTFail("Expected to not receive a valid response")
+		} catch let error as PHProviderError {
+			XCTAssertEqual(error, PHProviderError.authenticationRequired)
+		} catch {
+			XCTFail("Expected .authenticationRequired, got: \(error)")
+		}
+	}
+	
+	final func testGetQueryTypes() async throws {
+		try XCTSkipIf(!isXcodeServer)
+		let types = try await provider.getQueryTypes(authenticatedInstance)
+			
+		XCTAssertEqual(types.values.reduce(0,+), 100, accuracy: 1)
+	}
+	
+	final func testGetHWInfo() async throws {
+		try XCTSkipIf(!isXcodeServer)
+		let info = try await provider.getHWInfo(unauthenticatedInstance)
+			
+		XCTAssertNotNil(info.cpuTemp)
+		XCTAssertNotNil(info.load1Min)
+		XCTAssertNotNil(info.load5Min)
+		XCTAssertNotNil(info.load15Min)
+		XCTAssertNotNil(info.memoryUsage)
+	}
+	
+	final func testGetClientTimeline() async throws {
+		try XCTSkipIf(!isXcodeServer)
+		let clientTimeline = try await provider.getClientTimeline(authenticatedInstance)
+			
+		XCTAssertGreaterThan(clientTimeline.clients.count, 0)
+		XCTAssertGreaterThan(clientTimeline.timestamps.first!.value.count, 0)
+		clientTimeline.timestamps.forEach {
+			if $0.value.count != clientTimeline.clients.count {
+				XCTFail("Timestamp client count mismatch")
 			}
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { summary in
-				XCTAssertEqual(summary.state, .enabled)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 5)
+		}
 	}
 	
-	final func testDisableUnauthenticated() throws {
+	final func testGetClientTimelineUnauthenticated() async throws {
 		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.disable(unauthenticatedInstance, for: 1)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTAssertEqual(error, .authenticationRequired)
-					promise.fulfill()
-				}
-			} receiveValue: { _ in
-				XCTFail("Expected not to receive any values")
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		do {
+			_ = try await provider.getClientTimeline(unauthenticatedInstance)
+			XCTFail("Expected to not receive a valid response")
+		} catch let error as PHProviderError {
+			XCTAssertEqual(error, PHProviderError.authenticationRequired)
+		} catch {
+			XCTFail("Expected .authenticationRequired, got: \(error)")
+		}
+	}
+
+	final func testValidatePassword() async throws {
+		try XCTSkipIf(!isXcodeServer)
+
+		async let unauthenticated = try provider.verifyPassword(unauthenticatedInstance)
+		async let authenticated = try provider.verifyPassword(authenticatedInstance)
+		
+		let results = try await (unauthenticated, authenticated)
+		
+		XCTAssertFalse(results.0)
+		XCTAssertTrue(results.1)
 	}
 	
-	final func testEnableUnauthenticated() throws {
+	final func testDisableEnableCycle() async throws {
 		try XCTSkipIf(!isXcodeServer)
-		let promise = XCTestExpectation()
-		provider.enable(unauthenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTAssertEqual(error, .authenticationRequired)
-					promise.fulfill()
-				}
-			} receiveValue: { _ in
-				XCTFail("Expected not to receive any values")
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		var response = try await provider.disable(authenticatedInstance, for: 5)
+		XCTAssertEqual(response, .disabled)
+		
+		response = try await provider.enable(authenticatedInstance)
+		XCTAssertEqual(response, .enabled)
+		
+		let summary = try await provider.getSummary(authenticatedInstance)
+		XCTAssertEqual(summary.state, .enabled)
+				
+	}
+	
+	final func testDisableUnauthenticated() async throws {
+		try XCTSkipIf(!isXcodeServer)
+		do {
+			_ = try await provider.disable(unauthenticatedInstance, for: 1)
+			XCTFail("Expected to not receive a valid response")
+		} catch let error as PHProviderError {
+			XCTAssertEqual(error, PHProviderError.authenticationRequired)
+		} catch {
+			XCTFail("Expected .authenticationRequired, got: \(error)")
+		}
+	}
+	
+	final func testEnableUnauthenticated() async throws {
+		try XCTSkipIf(!isXcodeServer)
+		do {
+			_ = try await provider.enable(unauthenticatedInstance)
+			XCTFail("Expected to not receive a valid response")
+		} catch let error as PHProviderError {
+			XCTAssertEqual(error, PHProviderError.authenticationRequired)
+		} catch {
+			XCTFail("Expected .authenticationRequired, got: \(error)")
+		}
 	}
 }

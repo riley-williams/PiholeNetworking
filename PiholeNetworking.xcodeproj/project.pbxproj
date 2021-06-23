@@ -42,7 +42,6 @@
 		OBJ_61 /* PHInstance+Hashable.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* PHInstance+Hashable.swift */; };
 		OBJ_62 /* PHInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* PHInstance.swift */; };
 		OBJ_63 /* PHSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_26 /* PHSession.swift */; };
-		OBJ_64 /* Publisher+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_27 /* Publisher+Extensions.swift */; };
 		OBJ_71 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
 		OBJ_82 /* ConcreteInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* ConcreteInstance.swift */; };
 		OBJ_83 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_32 /* Extensions.swift */; };
@@ -94,7 +93,6 @@
 		OBJ_24 /* PHInstance+Hashable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHInstance+Hashable.swift"; sourceTree = "<group>"; };
 		OBJ_25 /* PHInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHInstance.swift; sourceTree = "<group>"; };
 		OBJ_26 /* PHSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHSession.swift; sourceTree = "<group>"; };
-		OBJ_27 /* Publisher+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Extensions.swift"; sourceTree = "<group>"; };
 		OBJ_31 /* ConcreteInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcreteInstance.swift; sourceTree = "<group>"; };
 		OBJ_32 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		OBJ_33 /* MockJSON+index.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockJSON+index.swift"; sourceTree = "<group>"; };
@@ -105,7 +103,7 @@
 		OBJ_38 /* PiholeNetworkingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiholeNetworkingTests.swift; sourceTree = "<group>"; };
 		OBJ_42 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
-		"PiholeNetworking::PiholeNetworking::Product" /* PiholeNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PiholeNetworking.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		"PiholeNetworking::PiholeNetworking::Product" /* PiholeNetworking.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PiholeNetworking.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"PiholeNetworking::PiholeNetworkingTests::Product" /* PiholeNetworkingTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = PiholeNetworkingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -209,7 +207,6 @@
 				OBJ_21 /* PHProvider.swift */,
 				BF836F5726266760002764B8 /* PHProvider+Experimental.swift */,
 				OBJ_22 /* Protocols */,
-				OBJ_27 /* Publisher+Extensions.swift */,
 			);
 			name = PiholeNetworking;
 			path = Sources/PiholeNetworking;
@@ -336,7 +333,6 @@
 				OBJ_62 /* PHInstance.swift in Sources */,
 				OBJ_63 /* PHSession.swift in Sources */,
 				BF836F5E26267C37002764B8 /* PHNetworkClient.swift in Sources */,
-				OBJ_64 /* Publisher+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -397,7 +393,7 @@
 					"SWIFT_PACKAGE=1",
 					"DEBUG=1",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -DXcode";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -421,7 +417,7 @@
 				INFOPLIST_FILE = PiholeNetworking.xcodeproj/PiholeNetworking_Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
@@ -492,7 +488,7 @@
 					"SWIFT_PACKAGE=1",
 					"DEBUG=1",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -DXcode";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -517,7 +513,7 @@
 					"$(inherited)",
 					"SWIFT_PACKAGE=1",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -DXcode";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -540,7 +536,7 @@
 				INFOPLIST_FILE = PiholeNetworking.xcodeproj/PiholeNetworking_Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
@@ -568,7 +564,7 @@
 				INFOPLIST_FILE = PiholeNetworking.xcodeproj/PiholeNetworking_Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";

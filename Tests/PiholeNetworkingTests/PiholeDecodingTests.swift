@@ -25,157 +25,78 @@ class PiholeDecodingTests: XCTestCase {
     }
 
 
-	final func testGetSummary() throws {
+	final func testGetSummary() async throws {
 		let session = MockSession(result: MockJSON.summaryRaw)
 		let provider = PHProvider(session: session)
 		
-		let promise = XCTestExpectation()
-		provider.getSummary(ConcreteInstance("1.2.3.4"))
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { summary in
-				XCTAssertEqual(summary.queryCount, 6673)
-				XCTAssertEqual(summary.gravityInfo.lastUpdate.timeIntervalSince1970, 1615696687, accuracy: 1.0)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let summary = try await provider.getSummary(ConcreteInstance("1.2.3.4"))
+			
+		XCTAssertEqual(summary.queryCount, 6673)
+		XCTAssertEqual(summary.gravityInfo.lastUpdate.timeIntervalSince1970, 1615696687, accuracy: 1.0)
 	}
 	
-	final func testDecodeTopQueries() throws {
+	final func testDecodeTopQueries() async throws {
 		let session = MockSession(result: MockJSON.topItems)
 		let provider = PHProvider(session: session)
 		
-		let promise = XCTestExpectation()
-		provider.getTopQueries(authenticatedInstance, max: 10)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { topQueries in
-				XCTAssertEqual(topQueries.topPassed.count, 10)
-				XCTAssertEqual(topQueries.topBlocked.count, 10)
-				XCTAssertEqual(topQueries.topPassed["diagnostics.meethue.com"], 209)
-				XCTAssertEqual(topQueries.topBlocked["osb-ussvc.samsungqbe.com"], 20)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let topQueries = try await provider.getTopQueries(authenticatedInstance, max: 10)
+	
+		XCTAssertEqual(topQueries.topPassed.count, 10)
+		XCTAssertEqual(topQueries.topBlocked.count, 10)
+		XCTAssertEqual(topQueries.topPassed["diagnostics.meethue.com"], 209)
+		XCTAssertEqual(topQueries.topBlocked["osb-ussvc.samsungqbe.com"], 20)
 	}
 	
-	final func testDecodeTopBlockedClients() throws {
+	final func testDecodeTopBlockedClients() async throws {
 		let session = MockSession(result: MockJSON.topClientsBlocked)
 		let provider = PHProvider(session: session)
 		
-		let promise = XCTestExpectation()
-		provider.getTopBlockedClients(authenticatedInstance, max: 10)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { clients in
-				XCTAssertEqual(clients.count, 6)
-				XCTAssertEqual(clients[PHClient(pipedString: "localhost.UDM|192.168.1.158")!], 97)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let clients = try await provider.getTopBlockedClients(authenticatedInstance, max: 10)
+			
+		XCTAssertEqual(clients.count, 6)
+		XCTAssertEqual(clients[PHClient(pipedString: "localhost.UDM|192.168.1.158")!], 97)
 	}
 	
-	final func testDecodeTopClients() throws {
+	final func testDecodeTopClients() async throws {
 		let session = MockSession(result: MockJSON.getQuerySources)
 		let provider = PHProvider(session: session)
 		
-		let promise = XCTestExpectation()
-		provider.getTopClients(authenticatedInstance, max: 20)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { clients in
-				XCTAssertEqual(clients.count, 18)
-				XCTAssertEqual(clients[PHClient(pipedString: "localhost|127.0.0.1")!], 1940)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let clients = try await provider.getTopClients(authenticatedInstance, max: 20)
+			
+		XCTAssertEqual(clients.count, 18)
+		XCTAssertEqual(clients[PHClient(pipedString: "localhost|127.0.0.1")!], 1940)
 	}
 	
-	final func testDecodeRequestRatioTimeline() throws {
+	final func testDecodeRequestRatioTimeline() async throws {
 		let session = MockSession(result: MockJSON.overTimeData10Mins)
 		let provider = PHProvider(session: session)
 		
-		let promise = XCTestExpectation()
-		provider.getRequestRatioTimeline(authenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { timeline in
-				XCTAssertEqual(timeline.domains["1615774500"], 37)
-				XCTAssertEqual(timeline.ads["1615824300"], 24)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let timeline = try await provider.getRequestRatioTimeline(authenticatedInstance)
+	
+		XCTAssertEqual(timeline.domains["1615774500"], 37)
+		XCTAssertEqual(timeline.ads["1615824300"], 24)
 	}
 	
-	final func testDecodeRequestRatioTimelineExperimental() throws {
+	final func testDecodeRequestRatioTimelineExperimental() async throws {
 		let session = MockSession(result: MockJSON.overTimeData10Mins)
 		let provider = PHProvider(session: session)
-		
-		let promise = XCTestExpectation()
-		
-		provider.getRequestRatioTimeline(authenticatedInstance, from: Date(), until: Date(), interval: 123)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { timeline in
-				XCTAssertEqual(timeline.domains["1615774500"], 37)
-				XCTAssertEqual(timeline.ads["1615824300"], 24)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+				
+		let timeline = try await provider.getRequestRatioTimeline(authenticatedInstance, from: Date(), until: Date(), interval: 123)
+
+		XCTAssertEqual(timeline.domains["1615774500"], 37)
+		XCTAssertEqual(timeline.ads["1615824300"], 24)
 	}
 	
-	final func testDecodeNetworkExperimental() throws {
+	final func testDecodeNetworkExperimental() async throws {
 		let session = MockSession(result: MockJSON.network)
 		let provider = PHProvider(session: session)
+				
+		let network = try await provider.getNetwork(authenticatedInstance)
 		
-		let promise = XCTestExpectation()
-		
-		provider.getNetwork(authenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { network in
-				XCTAssertEqual(network.count, 5)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		XCTAssertEqual(network.count, 5)
 	}
 	
-	final func testSparseClientTimelineResponse() throws {
+	final func testSparseClientTimelineConversion() throws {
 		let data = MockJSON.overTimeDataClients.data(using: .utf8)!
 		let clientData = try decoder.decode(PHClientTimeline.self, from: data)
 		
@@ -184,113 +105,63 @@ class PiholeDecodingTests: XCTestCase {
 		}
 	}
 	
-	final func testGetForwardingDestinations() throws {
+	final func testGetForwardingDestinations() async throws {
 		let session = MockSession(result: MockJSON.getForwardDestinations)
 		let provider = PHProvider(session: session)
 		
-		let promise = XCTestExpectation()
-		provider.getForwardDestinations(authenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { destinations in
-				XCTAssertEqual(destinations.count, 5)
-				XCTAssertTrue(destinations.contains { $0.key == .cache })
-				XCTAssertTrue(destinations.contains { $0.key == .blocklist })
-				XCTAssertTrue(destinations.contains { $0.key == .remote(name: "unifi.udm", ip: "192.168.1.1") })
-				XCTAssertFalse(destinations.contains { $0.key == .remote(name: "bad.udm", ip: "0.0.0.0") })
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let destinations = try await provider.getForwardDestinations(authenticatedInstance)
+
+		XCTAssertEqual(destinations.count, 5)
+		XCTAssertTrue(destinations.contains { $0.key == .cache })
+		XCTAssertTrue(destinations.contains { $0.key == .blocklist })
+		XCTAssertTrue(destinations.contains { $0.key == .remote(name: "unifi.udm", ip: "192.168.1.1") })
+		XCTAssertFalse(destinations.contains { $0.key == .remote(name: "bad.udm", ip: "0.0.0.0") })
 	}
 	
-	final func testGetQueryTypes() throws {
+	final func testGetQueryTypes() async throws {
 		let session = MockSession(result: MockJSON.getQueryTypes)
 		let provider = PHProvider(session: session)
 		
-		let promise = XCTestExpectation()
-		provider.getQueryTypes(authenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { types in
-				XCTAssertEqual(types.count, 13)
-				XCTAssertEqual(types["A (IPv4)"]!, 35.5, accuracy: 0.1)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let types = try await provider.getQueryTypes(authenticatedInstance)
+		
+		XCTAssertEqual(types.count, 13)
+		XCTAssertEqual(types["A (IPv4)"]!, 35.5, accuracy: 0.1)
 	}
 	
-	final func testGetHWInfo() throws {
+	final func testGetHWInfo() async throws {
 		let session = MockSession(result: MockJSON.index)
 		let provider = PHProvider(session: session)
 		
-		let promise = XCTestExpectation()
-		provider.getHWInfo(authenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { info in
-				XCTAssertEqual(info.cpuTemp!, 39.16, accuracy: 0.05)
-				XCTAssertEqual(info.load1Min!, 0.03, accuracy: 0.005)
-				XCTAssertEqual(info.load5Min!, 0.07, accuracy: 0.005)
-				XCTAssertEqual(info.load15Min!, 0.08, accuracy: 0.005)
-				XCTAssertEqual(info.memoryUsage!, 38, accuracy: 0.1)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let info = try await provider.getHWInfo(authenticatedInstance)
+			
+		XCTAssertEqual(info.cpuTemp!, 39.16, accuracy: 0.05)
+		XCTAssertEqual(info.load1Min!, 0.03, accuracy: 0.005)
+		XCTAssertEqual(info.load5Min!, 0.07, accuracy: 0.005)
+		XCTAssertEqual(info.load15Min!, 0.08, accuracy: 0.005)
+		XCTAssertEqual(info.memoryUsage!, 38, accuracy: 0.1)
 	}
 	
-	final func testGetClientTimeline() throws {
+	final func testGetClientTimeline() async throws {
 		let session = MockSession(result: MockJSON.overTimeDataClients)
 		let provider = PHProvider(session: session)
 		
-		let promise = XCTestExpectation()
-		provider.getClientTimeline(authenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTFail(error.localizedDescription)
-					promise.fulfill()
-				}
-			} receiveValue: { clientTimeline in
-				XCTAssertGreaterThan(clientTimeline.clients.count, 0)
-				XCTAssertEqual(clientTimeline.clients.count, clientTimeline.timestamps.first!.value.count)
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		let clientTimeline = try await provider.getClientTimeline(authenticatedInstance)
+			
+		XCTAssertGreaterThan(clientTimeline.clients.count, 0)
+		XCTAssertEqual(clientTimeline.clients.count, clientTimeline.timestamps.first!.value.count)
 	}
 
-	final func testUnauthenticatedResponse() throws {
+	final func testUnauthenticatedResponse() async throws {
 		let session = MockSession(result: "[]")
 		let provider = PHProvider(session: session)
 		
-		let promise = XCTestExpectation()
-		provider.getClientTimeline(authenticatedInstance)
-			.sink { completion in
-				switch completion {
-				case .finished: break
-				case .failure(let error):
-					XCTAssertEqual(error, .authenticationRequired)
-					promise.fulfill()
-				}
-			} receiveValue: { clientTimeline in
-				XCTFail("Did not expect to receive a value")
-				promise.fulfill()
-			}.store(in: &cancellables)
-		wait(for: [promise], timeout: 1)
+		do {
+			_ = try await provider.getClientTimeline(unauthenticatedInstance)
+			XCTFail("Did not expect to receive a value")
+		} catch let error as PHProviderError {
+			XCTAssertEqual(error, .authenticationRequired)
+		} catch {
+			XCTFail("Unexpected error type: \(error)")
+		}
 	}
 }
