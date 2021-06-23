@@ -3,6 +3,8 @@
 
 Open source networking library for interacting with Pi-hole DNS blocker instances
 
+If you'd rather use Combine, check out 0.3.0
+
 ## Getting Started
 
 ``` swift
