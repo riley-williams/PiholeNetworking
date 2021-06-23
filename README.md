@@ -26,13 +26,10 @@ var pihole = MyPiholeModel(ip: "192.168.1.10", port: 80, password: nil)
 ``` swift
 // Make a request
 
-let summaryCancellable = provider.getSummary(pihole)
-    .sink { completion in
-        // Handle failure or completion
-    } receiveValue: { summary in
-        print("Queries today: \(summary.queryCount)")
-        print("Queries blocked today: \(summary.blockedQueryCount)")
-    }
+let summary = try await provider.getSummary(pihole)
+    
+print("Queries today: \(summary.queryCount)")
+print("Queries blocked today: \(summary.blockedQueryCount)")
 
 // Queries today: 49216
 // Queries blocked today: 3872
@@ -43,12 +40,9 @@ let summaryCancellable = provider.getSummary(pihole)
 pihole.password = "MyWebPassword"
 
 // Disable the Pi-hole for 15 seconds
-let disableCancellable = provider.disable(pihole, for: 15)
-    .sink { completion in
-        // Handle failure or completion
-    } receiveValue: { state in
-        print("Pi-hole is now \(state)")
-    }
+let state = try await provider.disable(pihole, for: 15)
+
+print("Pi-hole is now \(state)")
 
 // Pi-hole is now disabled
 ```

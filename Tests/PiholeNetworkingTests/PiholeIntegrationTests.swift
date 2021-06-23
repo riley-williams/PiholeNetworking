@@ -166,10 +166,10 @@ class PiholeIntegrationTests: XCTestCase {
 		var response = try await provider.disable(authenticatedInstance, for: 5)
 		XCTAssertEqual(response, .disabled)
 		
-		response = try await self.provider.enable(authenticatedInstance)
+		response = try await provider.enable(authenticatedInstance)
 		XCTAssertEqual(response, .enabled)
 		
-		let summary = try await self.provider.getSummary(authenticatedInstance)
+		let summary = try await provider.getSummary(authenticatedInstance)
 		XCTAssertEqual(summary.state, .enabled)
 				
 	}
