@@ -11,9 +11,9 @@ import Foundation
 class ConcreteInstance: PHInstance {
 	var ip: String
 	var port: Int
-	var password: String?
+	var password: String
 
-	init(_ hostname: String, port: Int = 80, password: String? = nil) {
+	init(_ hostname: String, port: Int = 80, password: String = "") {
 		self.ip = hostname
 		self.port = port
 		self.password = password

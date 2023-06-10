@@ -26,20 +26,20 @@ class PiholeDecodingTests: XCTestCase {
 
 
 	final func testGetSummary() async throws {
-		let session = MockSession(result: MockJSON.summaryRaw)
-		let provider = PHProvider(session: session)
-		
-		let summary = try await provider.getSummary(ConcreteInstance("1.2.3.4"))
-			
+		let provider = MockSession(result: MockJSON.summaryRaw)
+        let handle = PHHandle(instance: unauthenticatedInstance, provider: provider)
+        try await handle.authenticate()
+		let summary = try await handle.getSummary()
+
 		XCTAssertEqual(summary.queryCount, 6673)
 		XCTAssertEqual(summary.gravityInfo.lastUpdate.timeIntervalSince1970, 1615696687, accuracy: 1.0)
 	}
 	
 	final func testDecodeTopQueries() async throws {
-		let session = MockSession(result: MockJSON.topItems)
-		let provider = PHProvider(session: session)
-		
-		let topQueries = try await provider.getTopQueries(authenticatedInstance, max: 10)
+		let provider = MockSession(result: MockJSON.topItems)
+		let handle = PHHandle(instance: authenticatedInstance, provider: provider)
+        try await handle.authenticate()
+		let topQueries = try await handle.getTopQueries(max: 10)
 	
 		XCTAssertEqual(topQueries.topPassed.count, 10)
 		XCTAssertEqual(topQueries.topBlocked.count, 10)
@@ -48,50 +48,50 @@ class PiholeDecodingTests: XCTestCase {
 	}
 	
 	final func testDecodeTopBlockedClients() async throws {
-		let session = MockSession(result: MockJSON.topClientsBlocked)
-		let provider = PHProvider(session: session)
-		
-		let clients = try await provider.getTopBlockedClients(authenticatedInstance, max: 10)
+		let provider = MockSession(result: MockJSON.topClientsBlocked)
+		let handle = PHHandle(instance: authenticatedInstance, provider: provider)
+        try await handle.authenticate()
+		let clients = try await handle.getTopBlockedClients(max: 10)
 			
 		XCTAssertEqual(clients.count, 6)
 		XCTAssertEqual(clients[PHClient(pipedString: "localhost.UDM|192.168.1.158")!], 97)
 	}
 	
 	final func testDecodeTopClients() async throws {
-		let session = MockSession(result: MockJSON.getQuerySources)
-		let provider = PHProvider(session: session)
-		
-		let clients = try await provider.getTopClients(authenticatedInstance, max: 20)
+		let provider = MockSession(result: MockJSON.getQuerySources)
+		let handle = PHHandle(instance: authenticatedInstance, provider: provider)
+        try await handle.authenticate()
+		let clients = try await handle.getTopClients(max: 20)
 			
 		XCTAssertEqual(clients.count, 18)
 		XCTAssertEqual(clients[PHClient(pipedString: "localhost|127.0.0.1")!], 1940)
 	}
 	
 	final func testDecodeRequestRatioTimeline() async throws {
-		let session = MockSession(result: MockJSON.overTimeData10Mins)
-		let provider = PHProvider(session: session)
-		
-		let timeline = try await provider.getRequestRatioTimeline(authenticatedInstance)
+		let provider = MockSession(result: MockJSON.overTimeData10Mins)
+		let handle = PHHandle(instance: authenticatedInstance, provider: provider)
+        try await handle.authenticate()
+		let timeline = try await handle.getRequestRatioTimeline()
 	
 		XCTAssertEqual(timeline.domains["1615774500"], 37)
 		XCTAssertEqual(timeline.ads["1615824300"], 24)
 	}
 	
 	final func testDecodeRequestRatioTimelineExperimental() async throws {
-		let session = MockSession(result: MockJSON.overTimeData10Mins)
-		let provider = PHProvider(session: session)
-				
-		let timeline = try await provider.getRequestRatioTimeline(authenticatedInstance, from: Date(), until: Date(), interval: 123)
+		let provider = MockSession(result: MockJSON.overTimeData10Mins)
+		let handle = PHHandle(instance: authenticatedInstance, provider: provider)
+        try await handle.authenticate()
+        let timeline = try await handle.getRequestRatioTimeline(from: Date(), until: Date(), interval: 123)
 
 		XCTAssertEqual(timeline.domains["1615774500"], 37)
 		XCTAssertEqual(timeline.ads["1615824300"], 24)
 	}
 	
 	final func testDecodeNetworkExperimental() async throws {
-		let session = MockSession(result: MockJSON.network)
-		let provider = PHProvider(session: session)
-				
-		let network = try await provider.getNetwork(authenticatedInstance)
+		let provider = MockSession(result: MockJSON.network)
+		let handle = PHHandle(instance: authenticatedInstance, provider: provider)
+        try await handle.authenticate()
+		let network = try await handle.getNetwork()
 		
 		XCTAssertEqual(network.count, 5)
 	}
@@ -106,10 +106,10 @@ class PiholeDecodingTests: XCTestCase {
 	}
 	
 	final func testGetForwardingDestinations() async throws {
-		let session = MockSession(result: MockJSON.getForwardDestinations)
-		let provider = PHProvider(session: session)
-		
-		let destinations = try await provider.getForwardDestinations(authenticatedInstance)
+		let provider = MockSession(result: MockJSON.getForwardDestinations)
+		let handle = PHHandle(instance: authenticatedInstance, provider: provider)
+        try await handle.authenticate()
+		let destinations = try await handle.getForwardDestinations()
 
 		XCTAssertEqual(destinations.count, 5)
 		XCTAssertTrue(destinations.contains { $0.key == .cache })
@@ -119,20 +119,20 @@ class PiholeDecodingTests: XCTestCase {
 	}
 	
 	final func testGetQueryTypes() async throws {
-		let session = MockSession(result: MockJSON.getQueryTypes)
-		let provider = PHProvider(session: session)
-		
-		let types = try await provider.getQueryTypes(authenticatedInstance)
+		let provider = MockSession(result: MockJSON.getQueryTypes)
+		let handle = PHHandle(instance: authenticatedInstance, provider: provider)
+        try await handle.authenticate()
+		let types = try await handle.getQueryTypes()
 		
 		XCTAssertEqual(types.count, 13)
 		XCTAssertEqual(types["A (IPv4)"]!, 35.5, accuracy: 0.1)
 	}
 	
 	final func testGetHWInfo() async throws {
-		let session = MockSession(result: MockJSON.index)
-		let provider = PHProvider(session: session)
-		
-		let info = try await provider.getHWInfo(authenticatedInstance)
+		let provider = MockSession(result: MockJSON.index)
+		let handle = PHHandle(instance: authenticatedInstance, provider: provider)
+
+		let info = try await handle.getHWInfo()
 			
 		XCTAssertEqual(info.cpuTemp!, 39.16, accuracy: 0.05)
 		XCTAssertEqual(info.load1Min!, 0.03, accuracy: 0.005)
@@ -142,23 +142,23 @@ class PiholeDecodingTests: XCTestCase {
 	}
 	
 	final func testGetClientTimeline() async throws {
-		let session = MockSession(result: MockJSON.overTimeDataClients)
-		let provider = PHProvider(session: session)
-		
-		let clientTimeline = try await provider.getClientTimeline(authenticatedInstance)
+		let provider = MockSession(result: MockJSON.overTimeDataClients)
+		let handle = PHHandle(instance: authenticatedInstance, provider: provider)
+        try await handle.authenticate()
+		let clientTimeline = try await handle.getClientTimeline()
 			
 		XCTAssertGreaterThan(clientTimeline.clients.count, 0)
 		XCTAssertEqual(clientTimeline.clients.count, clientTimeline.timestamps.first!.value.count)
 	}
 
 	final func testUnauthenticatedResponse() async throws {
-		let session = MockSession(result: "[]")
-		let provider = PHProvider(session: session)
-		
+		let provider = MockSession(result: "[]")
+		let handle = PHHandle(instance: unauthenticatedInstance, provider: provider)
+
 		do {
-			_ = try await provider.getClientTimeline(unauthenticatedInstance)
+			_ = try await handle.getClientTimeline()
 			XCTFail("Did not expect to receive a value")
-		} catch let error as PHProviderError {
+		} catch let error as PHHandleError {
 			XCTAssertEqual(error, .authenticationRequired)
 		} catch {
 			XCTFail("Unexpected error type: \(error)")

@@ -8,6 +8,8 @@
 import Foundation
 
 public struct PHHardwareInfo {
+    /// The number of cores
+    public var coreCount: Int?
 	/// The CPU temperature in Celcius
 	public var cpuTemp: Float?
 	/// CPU load for the past 1 minute

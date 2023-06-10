@@ -10,7 +10,7 @@
 import Foundation
 import Combine
 
-extension PHProvider {
+extension PHHandle {
 	/// Returns the passed/blocked data for the specified time period
 	///
 	/// Requires authentication
@@ -20,12 +20,12 @@ extension PHProvider {
 	/// - Parameter until: End date. The last interval returned will always be less than this date rounded down to the nearest second
 	/// - Parameter interval: The size of each reported interval, which will be rounded down to the nearest second
 	/// - Returns: Ad and domain query counts in the interval [start date, end date)
-	public func getRequestRatioTimeline<T: PHInstance>(_ instance: T, from: Date, until: Date, interval: TimeInterval) async throws -> PHRequestRatioTimeline {
+	public func getRequestRatioTimeline(from: Date, until: Date, interval: TimeInterval) async throws -> PHRequestRatioTimeline {
 		let start = Int(from.timeIntervalSince1970)
 		let end = Int(until.timeIntervalSince1970)
 		guard let token = instance.apiKey,
 			  let url = URL(string: "http://\(instance.address)/admin/api_db.php?getGraphData&auth=\(token)&from=\(start)&until=\(end)&interval=\(Int(interval))")
-		else { throw PHProviderError.invalidHostname }
+		else { throw PHHandleError.invalidHostname }
 		return try await resultDecoderPublisher(url: url, type: PHRequestRatioTimeline.self)
 	}
 	
@@ -35,13 +35,13 @@ extension PHProvider {
 	/// # EXPERIMENTAL/UNDOCUMENTED
 	/// - Parameters:
 	///   - instance: The Pi-hole instance to connect to
-	public func getNetwork<T: PHInstance>(_ instance: T) async throws -> [PHNetworkClient] {
+	public func getNetwork() async throws -> [PHNetworkClient] {
 		guard let token = instance.apiKey,
 			  let url = URL(string: "http://\(instance.address)/admin/api_db.php?network&auth=\(token)")
-		else { throw PHProviderError.invalidHostname }
+		else { throw PHHandleError.invalidHostname }
 		let result = try await resultDecoderPublisher(url: url, type: [String:[PHNetworkClient]].self)
 		guard let clients = result["network"]
-		else { throw PHProviderError.decodingError(nil) }
+		else { throw PHHandleError.decodingError(nil) }
 		return clients
 	}
 }

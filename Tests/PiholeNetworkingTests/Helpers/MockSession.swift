@@ -10,12 +10,13 @@ import PiholeNetworking
 import Combine
 
 /// Always publishes the provided object, encoded with a JSON Encoder.
-struct MockSession<T: StringProtocol>: PHSession {
+struct MockSession<T: StringProtocol & Sendable>: PHNetworkingProvider {
 	var result: T
-	func simpleDataTaskPublisher(for: URL) async throws -> Data {
-		guard let response = result.data(using: .utf8) else {
-			throw PHProviderError.invalidHostname
-		}
-		return response
-	}
+    func dataTask(for request: URLRequest) async throws -> (Data, URLResponse) {
+        guard let data = result.data(using: .utf8) else {
+            throw PHHandleError.invalidHostname
+        }
+        let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: ["Set-Cookie": "PHPSESSID=asdf1234"])!
+        return (data, response)
+    }
 }

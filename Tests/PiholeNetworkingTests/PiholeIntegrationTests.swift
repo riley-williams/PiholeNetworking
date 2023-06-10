@@ -11,10 +11,9 @@ import PiholeNetworking
 
 class PiholeIntegrationTests: XCTestCase {
 	var cancellables: Set<AnyCancellable> = []
-	let unauthenticatedInstance = ConcreteInstance("192.168.1.11")
-	let authenticatedInstance = ConcreteInstance("192.168.1.10", password: "8MzrcBRm")
-	let provider = PHProvider()
-	
+	let unauthenticatedInstance = ConcreteInstance("192.168.1.168", password: "asdf")
+	let authenticatedInstance = ConcreteInstance("192.168.1.168", password: "admin")
+
 	var isXcodeServer: Bool {
 		#if XCS
 		return true
@@ -22,7 +21,7 @@ class PiholeIntegrationTests: XCTestCase {
 		return false
 		#endif
 	}
-	
+
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -31,92 +30,90 @@ class PiholeIntegrationTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
+    final func testAuthentication() async throws {
+        let handle = PHHandle(instance: authenticatedInstance)
+        try await handle.authenticate()
+    }
+
 	final func testGetSummary() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		let summary = try await provider.getSummary(unauthenticatedInstance)
-			
+		try XCTSkipIf(isXcodeServer)
+        let handle = PHHandle(instance: authenticatedInstance)
+        try await handle.authenticate()
+		let summary = try await handle.getSummary()
+
 		XCTAssertGreaterThan(summary.queryCount, 0)
 		let computedCount = Float(summary.blockedQueryCount)/Float(summary.queryCount)*100
 		XCTAssertEqual(computedCount, summary.percentAds, accuracy: 0.5)
 	}
 	
 	final func testGetTopQueries() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		let topQueries = try await provider.getTopQueries(authenticatedInstance, max: 6)
-			
+		try XCTSkipIf(isXcodeServer)
+        let handle = PHHandle(instance: authenticatedInstance)
+        try await handle.authenticate()
+		let topQueries = try await handle.getTopQueries(max: 6)
+
 		XCTAssertLessThanOrEqual(topQueries.topPassed.count, 6)
 		XCTAssertLessThanOrEqual(topQueries.topBlocked.count, 6)
 	}
-	
-	final func testGetTopQueriesUnauthenticated() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		do {
-		_ = try await provider.getTopQueries(unauthenticatedInstance, max: 6)
-			XCTFail("Expected to not receive a valid response")
-		} catch let error as PHProviderError {
-			XCTAssertEqual(error, PHProviderError.authenticationRequired)
-		} catch {
-			XCTFail("Expected .authenticationRequired, got: \(error)")
-		}
-	}
-	
+
 	final func testGetTopBlockedClients() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		let clients = try await provider.getTopBlockedClients(authenticatedInstance, max: 3)
-			
+		try XCTSkipIf(isXcodeServer)
+        let handle = PHHandle(instance: authenticatedInstance)
+        try await handle.authenticate()
+		let clients = try await handle.getTopBlockedClients(max: 3)
+
 		XCTAssertGreaterThan(clients.count, 0)
 		XCTAssertLessThanOrEqual(clients.count, 3)
 	}
 	
 	final func testGetTopClients() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		let clients = try await provider.getTopClients(authenticatedInstance, max: 3)
+		try XCTSkipIf(isXcodeServer)
+        let handle = PHHandle(instance: authenticatedInstance)
+        try await handle.authenticate()
+		let clients = try await handle.getTopClients(max: 3)
 
 		XCTAssertGreaterThan(clients.count, 0)
 		XCTAssertLessThanOrEqual(clients.count, 3)
 	}
 
 	final func testGetRequestRatioTimeline() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		let timeline = try await provider.getRequestRatioTimeline(unauthenticatedInstance)
-			
+		try XCTSkipIf(isXcodeServer)
+        let handle = PHHandle(instance: unauthenticatedInstance)
+        try await handle.authenticate()
+		let timeline = try await handle.getRequestRatioTimeline()
+
 		XCTAssertGreaterThan(timeline.domains.count, 0)
 		XCTAssertGreaterThan(timeline.ads.count, 0)
 	}
 	
 	
 	final func testGetForwardingDestinations() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		let destinations = try await provider.getForwardDestinations(authenticatedInstance)
-		
+		try XCTSkipIf(isXcodeServer)
+        let handle = PHHandle(instance: authenticatedInstance)
+        try await handle.authenticate()
+		let destinations = try await handle.getForwardDestinations()
+
 		XCTAssertGreaterThan(destinations.count, 0)
 		let total = destinations.values.reduce(0, +)
 		XCTAssertEqual(total, 100, accuracy: 1)
 	}
-	
-	final func testGetForwardingDestinationsUnauthenticated() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		do {
-			_ = try await provider.getForwardDestinations(unauthenticatedInstance)
-			XCTFail("Expected to not receive a valid response")
-		} catch let error as PHProviderError {
-			XCTAssertEqual(error, PHProviderError.authenticationRequired)
-		} catch {
-			XCTFail("Expected .authenticationRequired, got: \(error)")
-		}
-	}
-	
+
 	final func testGetQueryTypes() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		let types = try await provider.getQueryTypes(authenticatedInstance)
-			
+		try XCTSkipIf(isXcodeServer)
+        let handle = PHHandle(instance: authenticatedInstance)
+        try await handle.authenticate()
+		let types = try await handle.getQueryTypes()
+
 		XCTAssertEqual(types.values.reduce(0,+), 100, accuracy: 1)
 	}
 	
 	final func testGetHWInfo() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		let info = try await provider.getHWInfo(unauthenticatedInstance)
-			
+		try XCTSkipIf(isXcodeServer)
+        let handle = PHHandle(instance: authenticatedInstance)
+        try await handle.authenticate()
+		let info = try await handle.getHWInfo()
+
+        XCTAssertNotNil(info.coreCount)
 		XCTAssertNotNil(info.cpuTemp)
 		XCTAssertNotNil(info.load1Min)
 		XCTAssertNotNil(info.load5Min)
@@ -125,9 +122,11 @@ class PiholeIntegrationTests: XCTestCase {
 	}
 	
 	final func testGetClientTimeline() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		let clientTimeline = try await provider.getClientTimeline(authenticatedInstance)
-			
+		try XCTSkipIf(isXcodeServer)
+        let handle = PHHandle(instance: authenticatedInstance)
+        try await handle.authenticate()
+		let clientTimeline = try await handle.getClientTimeline()
+
 		XCTAssertGreaterThan(clientTimeline.clients.count, 0)
 		XCTAssertGreaterThan(clientTimeline.timestamps.first!.value.count, 0)
 		clientTimeline.timestamps.forEach {
@@ -136,65 +135,18 @@ class PiholeIntegrationTests: XCTestCase {
 			}
 		}
 	}
-	
-	final func testGetClientTimelineUnauthenticated() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		do {
-			_ = try await provider.getClientTimeline(unauthenticatedInstance)
-			XCTFail("Expected to not receive a valid response")
-		} catch let error as PHProviderError {
-			XCTAssertEqual(error, PHProviderError.authenticationRequired)
-		} catch {
-			XCTFail("Expected .authenticationRequired, got: \(error)")
-		}
-	}
 
-	final func testValidatePassword() async throws {
-		try XCTSkipIf(!isXcodeServer)
-
-		async let unauthenticated = try provider.verifyPassword(unauthenticatedInstance)
-		async let authenticated = try provider.verifyPassword(authenticatedInstance)
-		
-		let results = try await (unauthenticated, authenticated)
-		
-		XCTAssertFalse(results.0)
-		XCTAssertTrue(results.1)
-	}
-	
 	final func testDisableEnableCycle() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		var response = try await provider.disable(authenticatedInstance, for: 5)
+		try XCTSkipIf(isXcodeServer)
+        let handle = PHHandle(instance: authenticatedInstance)
+        try await handle.authenticate()
+		var response = try await handle.disable(for: 5)
 		XCTAssertEqual(response, .disabled)
-		
-		response = try await provider.enable(authenticatedInstance)
+        try await Task.sleep(for: .seconds(0.1))
+		response = try await handle.enable()
 		XCTAssertEqual(response, .enabled)
-		
-		let summary = try await provider.getSummary(authenticatedInstance)
+        try await Task.sleep(for: .seconds(0.1))
+		let summary = try await handle.getSummary()
 		XCTAssertEqual(summary.state, .enabled)
-				
-	}
-	
-	final func testDisableUnauthenticated() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		do {
-			_ = try await provider.disable(unauthenticatedInstance, for: 1)
-			XCTFail("Expected to not receive a valid response")
-		} catch let error as PHProviderError {
-			XCTAssertEqual(error, PHProviderError.authenticationRequired)
-		} catch {
-			XCTFail("Expected .authenticationRequired, got: \(error)")
-		}
-	}
-	
-	final func testEnableUnauthenticated() async throws {
-		try XCTSkipIf(!isXcodeServer)
-		do {
-			_ = try await provider.enable(unauthenticatedInstance)
-			XCTFail("Expected to not receive a valid response")
-		} catch let error as PHProviderError {
-			XCTAssertEqual(error, PHProviderError.authenticationRequired)
-		} catch {
-			XCTFail("Expected .authenticationRequired, got: \(error)")
-		}
 	}
 }

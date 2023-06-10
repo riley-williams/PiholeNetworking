@@ -8,14 +8,8 @@
 import Combine
 import PiholeNetworking
 
-extension Collection where Element: Cancellable {
-	func cancelAll() {
-		forEach { $0.cancel() }
-	}
-}
-
-extension PHProviderError: Equatable {
-	public static func == (lhs: PHProviderError, rhs: PHProviderError) -> Bool {
+extension PHHandleError: Equatable {
+	public static func == (lhs: PHHandleError, rhs: PHHandleError) -> Bool {
 		switch (lhs, rhs) {
 		case (.authenticationRequired, .authenticationRequired):
 			return true

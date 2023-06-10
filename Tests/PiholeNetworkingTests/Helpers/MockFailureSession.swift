@@ -10,9 +10,10 @@ import PiholeNetworking
 import Combine
 
 /// Always publishes the provided object, encoded with a JSON Encoder.
-struct MockFailureSession: PHSession {
+struct MockFailureSession: PHNetworkingProvider {
 	var failure: URLError
-	func simpleDataTaskPublisher(for: URL) async throws -> Data {
-		throw failure
-	}
+    
+    func dataTask(for: URLRequest) async throws -> (Data, URLResponse) {
+        throw failure
+    }
 }
